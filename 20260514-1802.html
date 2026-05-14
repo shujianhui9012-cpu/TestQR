@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>测试数据20260514-1802</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #111; overflow: hidden;
+          height: 100dvh; width: 100vw; }
+
+  /* ── スライダー ── */
+  .slider { display: flex; height: 100dvh; width: 100vw;
+             overflow-x: scroll; scroll-snap-type: x mandatory;
+             -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .slider::-webkit-scrollbar { display: none; }
+
+  /* ── 各スライド ── */
+  .slide { flex: 0 0 100vw; height: 100dvh; scroll-snap-align: start;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 16px; position: relative; background: #fff; }
+  .slide.used { background: #e8e8e8; }
+
+  /* ── ヘッダー情報 ── */
+  .slide-header { display: flex; justify-content: space-between; align-items: center;
+                   width: 100%; margin-bottom: 12px; }
+  .case-no { font-size: 16px; font-weight: bold; color: #333; }
+  .counter { font-size: 13px; color: #888; }
+
+  /* ── QR画像 ── */
+  .qr-wrap { position: relative; width: min(80vw, 80vh); height: min(80vw, 80vh); }
+  .qr-wrap img { width: 100%; height: 100%; display: block;
+                  border-radius: 8px; border: 1px solid #eee; transition: filter .3s; }
+  .slide.used .qr-wrap img { filter: grayscale(100%); opacity: .4; }
+
+  /* 使用済みスタンプ */
+  .used-stamp { position: absolute; inset: 0; display: none; align-items: center;
+                 justify-content: center; font-size: clamp(28px, 10vw, 48px);
+                 font-weight: bold; color: #e74c3c;
+                 border: 4px solid #e74c3c; border-radius: 8px;
+                 background: rgba(255,255,255,.5); letter-spacing: 3px; }
+  .slide.used .used-stamp { display: flex; }
+
+  /* ── pre_registration_number ── */
+  .prn { font-size: clamp(10px, 2.5vw, 13px); color: #666;
+          word-break: break-all; text-align: center; margin-top: 10px;
+          max-width: min(80vw, 80vh); }
+
+  /* ── 使用ボタン ── */
+  .use-btn { margin-top: 16px; padding: 14px 40px;
+              background: #2563eb; color: white; border: none;
+              border-radius: 32px; font-size: 18px; font-weight: bold;
+              cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,.4);
+              transition: background .15s, transform .1s; -webkit-tap-highlight-color: transparent; }
+  .use-btn:active { transform: scale(.96); }
+  .slide.used .use-btn { background: #aaa; box-shadow: none; pointer-events: none; }
+
+  /* ── no-QR ── */
+  .no-qr { width: min(80vw, 80vh); height: min(80vw, 80vh);
+            display: flex; align-items: center; justify-content: center;
+            background: #f5f5f5; border-radius: 8px; color: #aaa; font-size: 16px; }
+
+  /* ── NG バッジ ── */
+  .badge { font-size: 12px; padding: 3px 10px; border-radius: 12px; font-weight: bold; }
+  .badge.ng { background: #fdecea; color: #e74c3c; }
+
+  /* ── ページドット ── */
+  .dots { position: fixed; bottom: 12px; left: 0; right: 0;
+           display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; transition: background .2s; }
+  .dot.active { background: #2563eb; }
+</style>
+</head>
+<body>
+<div class="slider" id="slider">
+  
+  <div class="slide ok" data-prn="202605150080LDTRVOO5">
+    <div class="slide-header">
+      <span class="case-no">Case 001</span>
+      <span class="counter">1 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOWWQU7EMAxFf5qRZmlu5NxsxM3MUbhBuhzJo4+clg2wYAF/AVm4qlXpx87rdxrxcT22Tyngr+TAWbGTCV8JT9FenCT2cWV0sraxaXTR2oBFve3tou79C/bx2xpf5Pbb9777Qa6cZGfAuM5Xw9U7z9P7VPIMnitygU1SVa9XsYfk9DSVLqN6u1oNIIV9hgUsDukyrk2iOwErm0qLXEinSpdkP6OreZ7O6dVtGVezYi/rKPWu8w0//CqtANPxPOtMF8lR9Yq42s7n+o8u9nx/Es+j0dotgevrUM8jnLedFM8jxjGVUqHb/tk99g0A5r385/AkygAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080LDTRVOO5</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080A7HOZMPW">
+    <div class="slide-header">
+      <span class="case-no">Case 002</span>
+      <span class="counter">2 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWQW7DMAyjYgM9qj/oU+yv9WfeU/oD+VjABQcl7WXbYYeNh80IkoAIwFCiRRvxcT22TxDwVzAw8l44SrQdaEvE20iWaIUsJEPDm5hZh1/v1jGtqmvfqo/f5vgCm1Zu/Rvf/RRWs8VAddolqhNT6+doaj+/FpDGJinbRyU30UjKaMuFvBxJ5zkyl25u4Dk0Xi9L1N9xVPhQreONBuS1S25qPwdSqe+N3qR5tHwc3l7KPGJKTr3CHARaif0HdH7enk/n44xMw7M6j6pfK3C6dWj7i3QXVf3dgDczw+xJPfspNHW2f3aOfQdxQLmn9YnxAgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080A7HOZMPW</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500801E1QJKAC">
+    <div class="slide-header">
+      <span class="case-no">Case 003</span>
+      <span class="counter">3 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6ElEQVR4nOWWS44DIQxEiwYpS+cGOQrcbJSbcZW5gVmORKsi0z2bZD2lKOMFQt74U8+YRDzbvr24gE/xgR5nZocdpdcpyqWSxGh0ZDLS2DRxkVKD9T01jFTeTI/tj3yjZVfGLYEWUIz7zYsRQ8uz1+xVyDN4Wp923qZG39HKaOVX5f2q6jOZHUexAKasz15h8ViRPVQW9RkhqHV65apaGTcvpHkireXZY6CmBdVTuo/CjimeKq7IJSsCMCnPOJUNiWXvxmF2z45i95+reB99TesALt8NUn179jXLOn2x9tFKQMdz+mf/2AdaubTU7ycWSAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500801E1QJKAC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080BF9X7430">
+    <div class="slide-header">
+      <span class="case-no">Case 004</span>
+      <span class="counter">4 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOWWTU7EMAyFn+tKLNMbzFHSG3AkrpYchQOM5OxdPeQUBolhwYLxArJIJauS4+fPP0J8PcdyZwL+ig20uDXuOg3Vk95SSQJVDUrGM5YEvysAQUVpcrF1bHrN1X7I4318ZyvNf/Tfb+rM+Qm0CjGSea5qmTyD5zH4BJtkUh2NXbYulzZF74fsWTrXiPGjdahl6TzzG0SVpmx5OqOikNYd8LEH30sSVzr7JK16RJ0T7yfPjP7cwvuSWr84oUqL14JnNXhpKMzieb3No9kwu6Ol7hsjSBZ5Oba8uXAefX32tT952lyY+WWbKU7rz7jtV2rvJewZfuWf7bFvFRehyL/cxQMAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080BF9X7430</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080JMB02FEZ">
+    <div class="slide-header">
+      <span class="case-no">Case 005</span>
+      <span class="counter">5 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA5UlEQVR4nOVWQQ4CIQycLiQe64/Yn/k1/BF7h4zpLhqjZ8dEe4Cml6HTTosRrzaWtxDwKzGwxZkaOsoeKF30lkIG2akhkfGMRYMLszXOM7BZFnPvNbF+GOPZ8ry3y7AixiWQvY4MOLHJeL6aGbb11DDMosqLANe+NDfAVvp0wlfpF2RNgYjulWQiVbiMNL32qSYZbj1GFlsJzl2FG1iRZpqDWlbf3aK7jkGtwr2nGZVFgYjn5bGP5koS7SMcmn1ISdXP+e4Ui+2wJvkehNfsHLbKeOYxppw90GX6ff5fyfrZ/uwfewPu3pkI5u1JAgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080JMB02FEZ</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500807FZ5XXVE">
+    <div class="slide-header">
+      <span class="case-no">Case 006</span>
+      <span class="counter">6 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOWWQWoDMQxFvzyGLBXIgawb9Ey52eQouYG1DHj4ReMGQttFF4kWqTEzWAzIevqSRojvays/TMC72MAez4UcOkNvI+kujSTc4LaQcY2S4xciBj3HyaVms2+H/nIfv9hc/vbds2w1pAVU5XbqVQnP1XNvS2+JegbvawqbZFIduVW3GiEDbtsxjzN7G2izb4xEztDYS9+znMS5wj+mpAHcTj2rb4BcBxp0JblLOlfP06OuQ3M4P86jdVbxSPLbgnDQRsSbxrkH4SheDdpZei5f76ijS9Xz7Zg8j2wTG8DhakjNL8eu7az8FuAiItGlgeoW078k+JV/9h/7CaISo7xfBGnMAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500807FZ5XXVE</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080EM7I4RZ4">
+    <div class="slide-header">
+      <span class="case-no">Case 007</span>
+      <span class="counter">7 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOVWQW4EIQyzGaQ9sj+Cn436M/Yp+wO4g1IFRtWq7XV9aCM0RFxMTOwMDd9jhh9HwF85gzX/Hg1mu/Q8RHfJCzFPlsPMrxE0uCAL8Lg1oDOKuU/V13sxXiNeez8nsxjXgJjqjEAydBnPD5Lo5dYwSd5VOrqiejOvGCL95vGSq/QLs+proZvZIawXy6+O5mpS4o5UF9V55TJcOGhytlfhKn9O/qb2LLz7+06RjgI6yWXL26hThXYe2fO8uisIcLE1u+ZvHbp+Dl/Z5Ile3ovx+xz8iMkmi4xnWza1eYZQv9iy9T2rcPnP/mM/AcOWnyu6u6lzAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080EM7I4RZ4</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500803QL4MRC1">
+    <div class="slide-header">
+      <span class="case-no">Case 008</span>
+      <span class="counter">8 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOWWMW4FIQxExwu9V8qB2JtFuRn/QJGgN5po2F9ESdq4SLYA1s1jDGNjxNdvHd9CwF+JgUNjGa2MtgMtkriNZGHfIzlyuIqZXVrOC9Nqcu7na/X+y4yfYzGvRG7VEWt61HfAiZmm92FmgC7zMrMzi+skGcA6oRV7ln8b5dwm4v6NHC63bdnDZV44s7gd3stAeI9cvbyhzkCi3gG4JKtKkyVTLyX55ib2Bdz9SEne24ikutFIwt/K3oC6w5HAxW1eQb0rz0n36njOMlFbZ5re+mll8aIesVLfG7xvV17dGBrLeBbMLB/ZP3vHfgD+pad0RCdLAwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500803QL4MRC1</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080ZWQ0XWUC">
+    <div class="slide-header">
+      <span class="case-no">Case 009</span>
+      <span class="counter">9 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOVWS2rEMBTTiwNdemAOZN+sV7OhF+kN4uXAG1SeJy5luq4WHROSWBv56X1kI57XffsFAf8FA494p6PwKBMoLjpLIYncdiCRcYxNwwuzCvTbBRi2i3Tez+94/+DabALebf10jPrXHE8Y2aKcAGS6jreb2UPxu5ldVPnNc3IM3K6HcG6Aq3N9bV02N3Lzs3lLpHhT8QKJQe3yeEl6lLQy3uKztBIZjyzex5pqx6AW+QJ++NHML3U6MxQ+R5awrgpQ0uygFIaoiXdhufmo0wqr1AeBN8IyKLxfMZLbHZ2fVRUvvus5sSVdH9mL3WO/ABDAm6n7wOYbAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080ZWQ0XWUC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500801W4ER8DB">
+    <div class="slide-header">
+      <span class="case-no">Case 010</span>
+      <span class="counter">10 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOVWMY7DMAyj4gId1R/ZP7uvOU/pD+xdAQ90M93dcEOrofUgG0QAWRSp2Iif69h+QcC7YOBQLAOBuoAaSXeppMgu7IXUNbacvDBr8K447ZLM/Wyvz/EX5oT3f3z3LOwiaWnb1WMnZrKeaxmZegYfayD8PEZSvVWddapk9kisN/AotgNiO9L6633NK42OPJ5JjSnFzoGSmXdoPkvJcnFOXmHhDFQOXMfOe0v2L5wcKjmyfERRvZS83BRp/kUtq8vM0/N27rPBedjXcct+gxzWgP2a9N/H2d/lX0krj+fdzDBNqr63LJ7tw96x318grnfZpjmyAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500801W4ER8DB</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500802B9BOSHV">
+    <div class="slide-header">
+      <span class="case-no">Case 011</span>
+      <span class="counter">11 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOWWMW4EIQxFPzDSlMwNchS4WZSbMUfZG0AZyaMfmWWbTL2/SBAyyI2B/2wTiN/jijcX8Fd8YHeb2IAyHcVEZykkMT7ZkUg/RtTERQgVuYUDGGGTvz37+2PcfaNuN9+buSoknavMqa+GqxfPvaSu5Blco1leO9PoO+o2xd27q3wdSq7Ob0+iGo4To4q4YuMUN/Wpsuid4QBnD22ATaRNFRfOMwxPpLU894LczKfsvm4Tm72y2JT9CNjZro8vBzvK9C1TXyXPca3Z67Nl2X3jWkd9tqT9oaobqx9xJa/un3OGEDBqerj1Kh0FccM/+8f+AN+tp7PqrvZcAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500802B9BOSHV</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500802IKLQYAE">
+    <div class="slide-header">
+      <span class="case-no">Case 012</span>
+      <span class="counter">12 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6klEQVR4nOVWQW7DMAyT49xVYA/oU5wf7ElDf6b8SLnL4CA324C2hx5aDmh9cGAigEyJIVMgl6tPV5DIq2ACz73m3gbQgnSXBkCkVZcK5DUmTl0pZdlPW5nJvdfT82vcwravfrjnvUdigO18FcHWc6vO1LNgXwZPYQMg1fWWvR3fEZIyj2+IhFpSBiqNL4ZpAKEmary6PsbqY9DeQml8rcJ+j9W5ek5RpT/zdOV/eRTS0jomah6JWkbSP+TR2o/DLSdCXTl7xU+fc8RBzUEDbFb0slD4zkn5/Ng+42MVtc7No1Aj6rm82X/sN1TdoatPmE2FAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500802IKLQYAE</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080UPUPOVJ0">
+    <div class="slide-header">
+      <span class="case-no">Case 013</span>
+      <span class="counter">13 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWu5IDIQyTgZ78kffPMvkz8kfQs6OMIbm7uatPReKC9boR8kPGiN92pj8h4F1iYI8zd8/dV8Cn6C5OErUFOhnXSBpcmB0YFn/Dijj3tW3K/4nx08rL8dNcjEugjEuclRiyPN/NDPAyjtPMLiq+dStHK4u4SjfA7jnmiJmclblr5hdkm/AJZw/1oA6Xa4J87oRXCvmCjAyTTYfbg2Oo5dJnYX2XLdDtTuk+gnYfgVHWPURtE58qXMAzW1RW18/l2623UlfSkwA3Pb/jADD3Lk4iXK6xPe1acFe9N/DVz1tAVP1sH/aOfQDNY5cjI9+8mwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080UPUPOVJ0</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080YKH3IEZY">
+    <div class="slide-header">
+      <span class="case-no">Case 014</span>
+      <span class="counter">14 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOVWQY7DIBAzEGmP0x+Rn1X9Gf0R3Ae5mtBW1fZcH1oUMYSLGWM7ScT/MfPbFvAte2CPuXSQq/XqorPUhThPKGQcI2twkdIOa9vYMdIm4nm713Eu/njJAtx8r9bm6dMYr2MLaR0l7tiIIdZzLb0K9QyuEeghbJIi3F5hDcZCFjaX+dcuABzXmdJM5z+Rf8GjTVhzoLCpeM4Y+1JXkDx2VW6AbEvPbs2NMJWunno2ko1d5aPn9yie6rJ+e9g2QsPoFguX+Rd1STp4VuYGXkJSxHN+LK6lR3rocqMf98swkYekZTzHXAL9MJGI5/Rj/7E3WnC3GVX1xz4AAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080YKH3IEZY</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080AUHLKDYK">
+    <div class="slide-header">
+      <span class="case-no">Case 015</span>
+      <span class="counter">15 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWQWoEMQyT40CPWeiD0p/t1zJP6QMWMvcEFSdtDy30tlrYmmEy44usyFZixM+Y6VcKeJYc2OPtJFBXog5RLZUBeoyFHmUkDS7M3nBeX9hwWhbtc/7+mlYfofmxhYaQL2Op+QYU4pTxPcxs/0wzu6jmaEcHezQ2SckcgT3aydlGCetyGS5bPJ9NVb1rfGPxLXTSO0ahDpf04LuYltjtofLnEXwbCkNiGe6Ope8qQIObcJqZ5dK8f5lmEuBij60H39Vgor7KcR6tk5fAfL0LRvozZxcE69K0uNXfbW6jTkJ9GfccZxP6FcKWewyUcI7sn91jPwCPyJ2m1edd+gAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080AUHLKDYK</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080VW4LWT4N">
+    <div class="slide-header">
+      <span class="case-no">Case 016</span>
+      <span class="counter">16 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA60lEQVR4nOVWMW4EMQgcFkspnR9xX7uf+Z6SH9g9q4nwbnXpJ1JCYcs0eGAGMOLdzuOHC/grPnDW6TN8xnZEiv4SJNGfFZ2sbxyauDB7AEgAy5ooz+2+1wN9tl+oefhXoVbFbUWtul5cQCeWDO/LzIBowGlmnyodXTaRm9gkJToCZ/BW7v1MVVwA2Vl4Z6Cr8O4kX80qtXidI/uoykKJdxTeQh1O+tT158K4toKAU6SjA8vMrCF8ln7JoZqDQdJ3tsW8QoEtdnkNRF3fqLibzNkpnPu3fezFQ19f9HH1zNTuV7l7lyrP9s/22G/XoKdAwJnxyQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080VW4LWT4N</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080MZCT0W3C">
+    <div class="slide-header">
+      <span class="case-no">Case 017</span>
+      <span class="counter">17 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA60lEQVR4nOVWQYoDMQxTJoEe0x8lP+vXMk/pD+zjggcvTqawbAu9FB12QwhBBIRsISc5fq9je4KAv4LBJc7sI0ubQDMSb3P3IK2e3V04vIGl1FEHtENTYdd+J3C8wLSvRr979ymsRIuBUkeqUqpDuX6WxvbzYxnaedkIvBu0F+1l+Ur7cWXV+YdeAEbMjSxtJsbsMqnOmL5anR02I8tYvHmG89LL9rMAdVhsZp1PyWsbcx75MCD0Ev0MnEq5fm7BO828LG3ceZRlL8Dl3mlz0H2gjuMaYfVFyskN2FNK0FsMRe0X4fCmf/aP/QaktrPmKgLbwAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080MZCT0W3C</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080T1J95HL4">
+    <div class="slide-header">
+      <span class="case-no">Case 018</span>
+      <span class="counter">18 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOVWQYoDIRCsHoUcnR/kKc7PwvzMeUoeENDjglJLZ2Zh2d1DDkkdsh5UGqHsqmpbI36OMf0KAe8SA6vPoYI13wO5i+6SSQI5AoH0a0waXJgtSOvHDDSLYu7b5fUYf8XSGlN54NyzYtGt5Uv2gkpEE/s5B6mfwX04uhubpKiO2mLzZufCioht2KLjObF74gVwtruKZySGisASWFQ849AU8JQdXYW7Z3p3dU+ee9f6ufv7XCjTt/q86+ugonynr36EMWOcy+kqq6Ps5UOGmqnz83SszXpazS5j1vWFY3dbetxOXdYXXN/A4hWUZO8zvvnZJVb52f7ZP/YTsHOtynu1QQEAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080T1J95HL4</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080UU8QILCM">
+    <div class="slide-header">
+      <span class="case-no">Case 019</span>
+      <span class="counter">19 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6klEQVR4nOVWMY7DMAyjYwM3Kj+yvtaf+Sv5gTUeoEIHxZl6N9zQcmiNwAmEAJRIJnQJPK779qsEvEsNMXOvEZA1endSLz0iYGWhZxsbBxelKGTUQ2GlsbnvkPFqjD9qVtz0H+89q9bSWkCTKDKbBIzr59nr7EQ/I641XK4n5+hr2kyTblOY3ncez+tKSwNO43l2l6gxfKlM4hkpqIwTPSUm4o7l5DUv288zv6M1slPzaOQveqFvHNwekb7KBmQw/QzkmHUy/bxd9zOMXG7fOzmP1NEb8HUouPrW3IOoL848uiKJ5efyYefYH5GBq7r8J82FAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080UU8QILCM</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080OFO4C8OG">
+    <div class="slide-header">
+      <span class="case-no">Case 020</span>
+      <span class="counter">20 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWQW4EIQyzB+7wI/jZan/GSn0QOa4ESpXObA/tuVbVRiOUycXEOAY6vsY+vpWAv1KDz1jTbChn622JcJu7Jx8pVvepwY0a2WG3+DNmMffl/mT/YYzfUMtxxEC225sjF4fJ9vIgGan1TbKq5uiK8UpcpGfrGWANVe+KbF3V7wivAFYZaTbV/CKYnS25X35VZDyHVzzJNM/eZf7cFtqnPyclzx5Uy/VMMqjO1iOjRs8HEJ2i3NelMZ1PEg1ojA8oc6twz3CrKFN9Vxh3xTrv4kOE6z7wYVbAQ3W+eL2vEJYVoZlf/rN37DtPnpNl4YwmdAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080OFO4C8OG</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080QY8SKHV1">
+    <div class="slide-header">
+      <span class="case-no">Case 021</span>
+      <span class="counter">21 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nN1WO2oFMQwc2YaU9g3eUeQb5Mq7kIu8AwTsXmaCdvOaJEWKRAtPhTGDYazfSEJ8tZW+QcCzYODwMw8Y9ADUgv6iJFG3PJBJ/0YK4C0ABIrZ7TbKbPk9NvZ1y/f+zxw/Yrrar979YZwJlPn6RpRKzDB/dxHx6+xLRFoMr1ymG7MXQNq+GlZDmT1MNzjUKr1/h/o9hfCSmU7q6uENxSDeoQa1unEoucXxkq7M1RkPoY6Ls9uR4tMsqJ5FRArwchfvXwmrZ59H+RxJp+MpcB656RKgjuh9Y3ZPcdD8TQ9SMewuXEH5TUdJexNlX3j2KH/x2K/UPoGYurpuHl2DfQAgS5EZymf3JgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080QY8SKHV1</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080Y5Q4NU32">
+    <div class="slide-header">
+      <span class="case-no">Case 022</span>
+      <span class="counter">22 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWQQ7CMAxz10kcy4/Cz/ha9xR+kN2DjNJKHACJC/gAVbV1UaXEjpOsEI/rujyZgF+xgZ7P6hZtQrcQxWIkgW0FKplhLBq/KOWE1nk5YS+rmPv9XI7f9vHK1nru9/c+ZVtTWvnaUlWN2NV6rm5CPYNzOWIIm6TIr9tMbiUre8jw+oDsFvmVbIcyv+SA3HU8c9KbpUTPAEKFt7olUke26KbDO/VcOXgW59dTUXMqhaqOSNZUdUejSs/LfR6VI+hbtK7qkzbKdpQSZDyv99O1GLAdQjYXRn5HHaEp+zOmnrNh6vRc/uw/9gYkR7bWspLssAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080Y5Q4NU32</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="20260515008076VB3YJN">
+    <div class="slide-header">
+      <span class="case-no">Case 023</span>
+      <span class="counter">23 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWOW7EMAwcWgJSan9E/Sxfk39E9RIYkPYCi2y9UyRTECM2NMe8xPEb+3hzAX/FB7ewxVBM06GLFFfdvbivFtaNEzd8Ih2zfxkwpZK1b+PzMV5Rn+TcouS4DtT5HbY5Jk3nU0TiC2bfIvJg9dGNEcWcWJx8Z69ApAnsR2QNWr6GBaw2iimrf+GeHdRC5yQ8neOfAkkGcz6v5jmf41l4OidMVxsXXSSdRSTGcoUGE1Y93/toXIRXz6aARjFfq4FWzzfOq8DiDDjwjuNDvtm39HsXH6S47iNF1ppZg3xfeU4P0n0l/+yO/QGCS6FZv1gXIwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">20260515008076VB3YJN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080BJ4JYFMS">
+    <div class="slide-header">
+      <span class="case-no">Case 024</span>
+      <span class="counter">24 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA50lEQVR4nOVWO25DQQgczPa8G/Fulqs9H8gSW0biiYis3dgpUiRTJBT7QSvBALMghWc5Ly8q4K/oUNGrBrQWdE+SL15VsMq5a1W7ceHYhcgOYACYMsixn3Juv23jS51rfOvdD+lGl9baAFhh0vBeRWRdThHZWDxaEki7H5PEX6/wpu3jmiy8aceicDtgNLzQT7waSCreI+3o5IYniHirEq699hetxPy2rCB3a2DZffSjVdJUHlV1nK2IdTW6H8ExN72JFsSCOm9YV/X7BsydPIOM+bZoBW5+Ne5/ZlLr2SuYPJJ/Nsd+ACOgrPTunE1VAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080BJ4JYFMS</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080JMO3F2QD">
+    <div class="slide-header">
+      <span class="case-no">Case 025</span>
+      <span class="counter">25 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/UlEQVR4nOVWUUpEMQycvBb8zIIH8CjtzRZv1gUv4gGE9lNoGZnuKqLfRtDwyGv7M0maydSIr7aOb0fAXzkDu3zqmH5NvcygWApJONNzTaTCOGJwYVYxavaGYTm49t7W6acxPlt+X1xmrsG4BPI4PxHZiRFW54uZaTnqMrNTFI8+rKuxSYbwCOwliUctkdOZegx/le90JTs1PQrjcJvmlXzR3uPqPL3tj4ohDJecrpSxfeT9yqQLaq3AfsY1zdTLb+jR4+6uMD3K0qPdya/3fRngfYXqAu5ebPou+hGAe9z+47we2k2LjyD+ktyjUoSKm1ddXhOSke8r+2fv2DcGP6coBPzTpgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080JMO3F2QD</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500804LSPQ4A4">
+    <div class="slide-header">
+      <span class="case-no">Case 026</span>
+      <span class="counter">26 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAElEQVR4nOVWu2rAMAw8Rd4dyAcpn+58Sj+gYI8BmysSoUPboUOroRXBAWE4PU4nC/HR1vbJBfwVH9j9VFK7hcNmUixGRrFrU9LD2HJwIXJinGsHhpT02mv/fYwvfNcc53fu/ZCvOLXiV16BSoy0fC8RAZzMS0T2rHxrkHlgDk88SzfAGFtlmxGAklnzewG4d+hLVHucSXpFAqYdjJS15+hV8QkquI+2jr5w3UfP6i9cmSvZzVtcc/rrdXbrwajKLF7hfR9NXw1puNuzj3wjmEMn8Xl79hFM2UquPoddHLsLR20rFdekUgDNe+cY6XSKr2XpBh4+d3PEPD7LP3vHvgF3gZHMmtCCLwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500804LSPQ4A4</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080QZ1RAK99">
+    <div class="slide-header">
+      <span class="case-no">Case 027</span>
+      <span class="counter">27 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6UlEQVR4nOVWwW3EMAyj7AD3VDfIKM5mt5pulG4gPws4UCE7LYr2fXxcBcMy9KHIUHYk8DvO8qcEvEoN4blXb9XbLLRB6qVFpNjnbjUi2ygcXIgcUBv9QJeNrH2X6s/G+BnbldVEfePixkzJVwP9tf2MWDHJrhgkvg1qudBq2ODxtVhwC9pZuI6BpDzUavbA0jlsqT1mD5WEW3JT24Cb49zjfGPN0befp6+SeGHOL/L7ehvKm6OIuC4NzcOgzS+WwiD6uVy532WPD7mzfFW+Do/6fgCPm3PfIw3ZXXSarFDfI1D9LP/sP/YTB12jocqyaPUAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080QZ1RAK99</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080Y69KBV4K">
+    <div class="slide-header">
+      <span class="case-no">Case 028</span>
+      <span class="counter">28 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOVWsW3EMAwkTQMulQ1+FHoz4zdTRvkN5DIAhQtIP4Igqf+K5AoJUnMkdTxKIT8xl19XIn/lTjBytSGGK3UPUiyOYoxzNyDDWDi8orpL63k6dSXX/jz0VtRk3naPl3N8x5rSqs2GSIOcZD27DSfqWXChkr0QpHw9xdw6AEMPXv8mMGSqTj02Uv8K0PNlW1qHoRPrLNH6VW2UWwZLV1aklgFAGo+39OyRRp2JB7d/pbQdpHyXr3lkw+etb4+d5Vcu4jl8G4h6Xp77qXjohx7zjTcXCr4GprxvQZsL+b6GtMooiw7u/yoaiHrWf/aP/QQ1wrDealmIKgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080Y69KBV4K</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080985NAWF5">
+    <div class="slide-header">
+      <span class="case-no">Case 029</span>
+      <span class="counter">29 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOWWUWrEMAxEJ5FhP90b7FHko3uP0gMU5M+CyxQ5KZRuoT/d+WiFCUEExqN5cbIRX+ttv2sBf6UHRl6NNB7WfYr24iQx2hzNyNzGLtAtADY4at9qlPFkL+LZ3ywervFNb7RcPz/3m3MmUGpv1yiVGFqewy1cyDP4UajnzRT59TTLbuEMn1Wnmx6PtxiYwjlPOHKtlEVz3oHbJZIuY3+99gdp3BcXxsYOHEhreQ7PZGsXcoXDbwK22J5Cnm3RlX5lc47MNG3WtKziGacu+4pZlu/++XtUgMtzgzTfPtf5LMwX66TCma+I5+2f/ce+A+J6v0wsATrcAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080985NAWF5</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080JTWPMUPH">
+    <div class="slide-header">
+      <span class="case-no">Case 030</span>
+      <span class="counter">30 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOVWy20FIQwcP7izUgpIKdBBSkprbCnpwBwjGU1kyEfKe4ccEh/yfGCFtZIZ8MxYiO8xL1cp4L/kQPU1aUXZ0KsFnaWSROlenfRjXGLqQqQBMABDcvDdD0kv7Y9r3MzV/LP/fimXvbX2B/DWGmF4TxHZmykiRxTeTZ+B1wcN1Y3RMJocyBv4aEG6wU4FtS7yunpYkF5VF43iimFra1F4k4KkFRoC8bI7ZBfJnsgUh3eF1qRLqIN8AR9+hPf3Zcw9f/oR81atIB5l9yNUjKf5yGyQoqHzRunAOY9QvCtOy8/bI2aUbpBMzt/uLR3GI/2ar1Icj+TO5tg38tqTjsgbXTcAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080JTWPMUPH</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080HIH04YXC">
+    <div class="slide-header">
+      <span class="case-no">Case 031</span>
+      <span class="counter">31 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6klEQVR4nOVWQQ4CIQycLiQe64/Yr+3P8Cn+AI4mNTUFTurBg5mDNqRsmk2mhekUcTzbfXsJAb8Sg7fwyd1QRqAYKZfiHoedtSb3SGPj4EJkR5d0DZ/pZ28EjDexkj/770uxHNQam3VAHZ1W70VEZgZ3ETmz+mhaC1ZPM1L/ltG/Na0PGm4sUzetQEmNpRtaM3BqsQY07X4rtBpWyeE3Cm4raUAHo9RBw53WZuHO5BUGjWMS8XC3NY+6LH3uO3UeAVmPzNXnael6Tg3Qyn3nFGi9DaEGC9eDyYcNtWTdLxafp1jx+Cx/9o59AEq4k7Y172OfAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080HIH04YXC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080FTKBYWC5">
+    <div class="slide-header">
+      <span class="case-no">Case 032</span>
+      <span class="counter">32 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAUlEQVR4nOVWQY7DIAwcE0s50h/sU8IP+qSqP6NP2QdUgmMlR1OZoB660t7qwy4iJPFlGHvGIMT72NOPEPBXYmDzdSEtH9Q3C9rLRhK9HOi+jRSDC5GCXP2viwblWV9f6718CCP9EuvFPo7xzpeA5qvkppnosXpu29K2QD2Dc1QbwiYZ5KNetBd1yl7l/RSVZ2fqrDH6hgXlWf3JTQBTWe7nlTH9GRxyslzHpDfMFIJL2tAzcEg6Vs/DTRiULfY8IiuHiy3yPMJNgf3r+gjzUZuVnTNMV23gsk4vB9U3zXe/IFcF1u8SlmeSyyEq91SYrm4ign6Rk/fnNeieI//sHvsEg8yiJ7C1rEUAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080FTKBYWC5</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080C5A5VL5L">
+    <div class="slide-header">
+      <span class="case-no">Case 033</span>
+      <span class="counter">33 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWSW7EMAyjYt3VH9k/m69pntIf2HcPWDATFEXb6+jQCkGc6EItpGQjvtvj+OEC/ooPnHq32RHP1PsuiqWTV7EbqTCOGlyYDeC+ASzz4tpH+ssxvppf5xrbRzEuAY/UXxCrms+idB2fwcuSU8QmWYQ7u5iMvkPQlfnuU8JKmWxF+R7SbKSZSchv99dg/GJUW5NT1FLNo6y/ehpPHZ3E3pV8nl0BaFBX7YVlZudYjnzYQCRq95GvW1OX63gF9Daxg4is0pF/frV32z5a9R6kR3pQLT7K9EuVN7gjUahfXPtIU7oK1/7ZPfYDW4CfASYqkP4AAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080C5A5VL5L</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080M293WJ9K">
+    <div class="slide-header">
+      <span class="case-no">Case 034</span>
+      <span class="counter">34 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOVWQWrEMAwc24EcvdAH9CMF7c/C/sz5kXxccJgiJ4XSPXcOrQhW4stImpGURPy0I79cAX/lDvQ4ixt5pm5DFItNxD3dUMgII2twkdIdtY1+R0+LuPZ9W/23Mb7bcvn6+HjzRYvL6dYBVKKr9VzchHpeIsfgF8/FqJsboBtqQ22FLGxDlC/INh+O+IpqDxW/I+AigHIGkCW4ZAyNyTI9RtZQzY0BrL4Xt+Odx03VR6c5zlJTyC+if6PCIaqq4nduwOIIiuuEziJcwEqsQhPqOV++J9THM20qXeWvF0PfgD22YRbyy6uLdXPD4wxdzRhUek7/7D/2Ey/Uq9h26BR2AAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080M293WJ9K</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500807YP6LZSD">
+    <div class="slide-header">
+      <span class="case-no">Case 035</span>
+      <span class="counter">35 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7UlEQVR4nOWWMW7EMAwEl7GAlMwP8hTp4wH4lfxA6insgTauuaRIkWyRU2EDhABanBFpIx7XfvkSAv5LDJz1PEjOfgZ6ir6lk8Sy5nFm19XAbMBj26js6tr3q+B/muOb2LKf7futWCu1gOZhPpsTS+vz7IfUZ/C+LrFJiu7RGm2NVkcG1thvOr77fW7DAZRba3yo+Ga9e3oUZVGdwVk3Nwt0pFOZN9EPVpM8ldb6PDuc6XXklM6jyPstThlfFtYi65GyOs9iWmQ9qPUZ5VVJdSmd0nk04AHg9XNAzTeqOev44ppH1Tp0PtuT/cfeANdysoDDgKAxAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500807YP6LZSD</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080B5NNIWSB">
+    <div class="slide-header">
+      <span class="case-no">Case 036</span>
+      <span class="counter">36 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWQW4EIQwzA9Icsz/Yp8DPqv0ZfUp/AMeVMnIVpmqr3WvrQ5sDIF8MjpOQiMc4ticI+CsYOGLN7I66gOqiu1SSmC+LnXGNTcOLlBrstg9gpqLX3vrvczxhs/lsD9j32H4YK2EtoFg/rqMYMbV+HjUPpZ/Bj+insUmK6mi2MlvIbR2zHRedzud7z77hMp3H2oxuPbIs0xlhKsfrPnC/rhLeBLwIRxkzO8llaa2fQ+3q1t00On/NI7JzVbGLeGsozHgpLFztKl6g5s+uJfRzhEWK3W73i3oeldU39rcGbX65Skncr/KIwzmVXMGb/tk/9h1du6rm6xl/3wAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080B5NNIWSB</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="20260515008099YEXFJF">
+    <div class="slide-header">
+      <span class="case-no">Case 037</span>
+      <span class="counter">37 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOVWwYkDMQwcrQ15Kh1cKd7O0pq3lHQgPwNadGid5JF8wxDujLHFfAaN5JEl8Lr25Q0C/gqGsDxLdKAdQHMSb4uIEuGaZxiHNzGRFdgqgCH1y+qxfBirzyjGSuTFvb6GWWVifTcRAVod6y4iZ1a+jwW9B87S2bUfOndXIm+EozkaNC0z44XHC81ky6G2k3j7dMtiQArO86tiqNr3cyvXy07uZ8vu8in7wpxHkdsycJLOLR/vEAC3n36TleaTQJudPN3DmbNiiGPL9zs4+T4w7TXn0XYy3hyMealhXHxw/1d2DEReP8s/+8f+AlljsXCfTCU6AAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">20260515008099YEXFJF</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080FB114C85">
+    <div class="slide-header">
+      <span class="case-no">Case 038</span>
+      <span class="counter">38 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWO24FMQgc1pZeybsRvlmuxt4Il0/yaiKcKFI+RYqEInGB1milAQ8DCPHxXMcnF/BXfGCkbWltO2wVxWIkoVxAIzOMowYXIgNz3OiY0ovfXv26/zbGl74Tc3znvx/y9SwtoM+ntErMsnxPEckI5rhE5F6lo7cTWdgkS3QEhrXUkS/lUrao0W/mu9QXDOotjGW4YUs9WxZ3q9aqdyZbgPTNr9fhxs5098ndqOv43cWc6K2ung9MEcm2/BB55OdA6TzyRt7q5hEYBqSEGzfFRXXV3100qufRTHJfZ/FRhMuUrXfYwlnIL172q0102X4l/2yPfQYUxKD8R3JCiwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080FB114C85</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080E5QZKURF">
+    <div class="slide-header">
+      <span class="case-no">Case 039</span>
+      <span class="counter">39 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+ElEQVR4nOVWy2oEMQyTk8AeXdjfKWT+bH4t80fOseCgxTNb6OO8PrQ+xCQXWUaRLcTPWOXXE/BX3kCLsxrIi3r3pFr6idiXbJWMMkoOLkQ26IjblJbc+yk3ezXG12jPrOP9bi0Xl5F6c0CJmdbnQ0QwN8xtichbFl89v8/Ex90SfQO0HmIOPffK4Xn/Fz53BxzHkj1UXdL8qtfLtThIehquMvjqoKGm4XK48vJnV0YNJQf3DIOHUQ9ajq6+zaMATeNrMY9O3IFoeA7f8ElBh1LQicMxUveNKR4DcV9pPvkZlRAcN8+dRzpWA/QUWcnVs/VEPcs/22MfUymY3ZBnpxwAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080E5QZKURF</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080C9GWQ84W">
+    <div class="slide-header">
+      <span class="case-no">Case 040</span>
+      <span class="counter">40 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/UlEQVR4nOVWy21DMQyjP0COzgYZxd6gI3U1B+gi2UA+BvADA/klOSS9lgVa4cH204WmKMkKxKtt8c0F/BUfaL4m9mR1OeoU3aWSxGjbEYn0a0QNLkJoKD2xY4QsinN+nrZQf0Hz0XahIeRLIJe+nSwXYmjz2ao2n8GHzfI4RAmuOVOvXy+iOosKdzerEx7nqYtz51J2b1lJFOeI8ZlXdk3geuo/g/GN0TALn0Kr89nWT+m6vDJfE+nfojxVdcQFSnbnK4pz9vcIFeOYJtLl44uaecP5At43Vr+S6Rvv+2j743u4NGj1xerPKn0jcA4hYLRkZ4x2EM054Z/NsTeJd7Z70rM4XgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080C9GWQ84W</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080LSE76YMJ">
+    <div class="slide-header">
+      <span class="case-no">Case 041</span>
+      <span class="counter">41 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+0lEQVR4nOWWS24EIQxEy4CUJbkR3GyuBkfJDWBPqyJDz2YiZZdaZFALt9g8/CkbI17XFX4cAf/lDBy+x1FWPq6XJbpLIQn0NGsk/RpBw4VZRW7+TUuiOKfbzspZ/4gRfuFmWh5Jy+U2cTgdU5bfbmaYFbNeZvap0tFZA2sXNkmJjsBRTjFHMrItkX5BNgDLuQ0o3kCCiLtQTuOKbLo4k8gbd6Nl+d3ycZd3i846f089b68bZfkdvsfhIjpTaal0RCfCiXmjg4gLFC+nE2dRXYXbzppQLntcoj4Znj+dowP9QzT3cefX9VuQZf05POeRvzTiV1XF2d7sHfsN2W+0TsWclCQAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080LSE76YMJ</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080TW6VCUTD">
+    <div class="slide-header">
+      <span class="case-no">Case 042</span>
+      <span class="counter">42 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABCUlEQVR4nOWWQWpDMQxER7ahSwd6gB7F/2YhN3OO0hvIy4DNlDGhhTaLLlotWi++P8IgyXoa2YjPa6UvJuCv2EDXN3vL3rahzaBYGnm/7EwqjBTjF2YH6mWdgGEl+O7HGbX/so9Htnr53rmfshWhpa1lByoxwvK9mhnGgXEsMztF5Vs3zAO3Zw/UDdCbiBJULbPPoP4F2Xfbti0gUo8Z5XeK554VQCcZl6+DW6nokqwZ1r+1l2Gl9vVCqVYK8AtlupOd0ufOsPr6+zwS27NG1dc1j7JjqpsYx7O33blEJeN4Tvd9WH49lp2juCofv7UvXJ9m3BwkVdmbpj+lISmSZ6i+cTzbP3vHvgFQWJ5GtsaAcgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080TW6VCUTD</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080UA9FDBJ9">
+    <div class="slide-header">
+      <span class="case-no">Case 043</span>
+      <span class="counter">43 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA4ElEQVR4nOVWQQ7CMAxz10kcux91X+Nn/Qo/yI5ImYzSbRyAAwfwAXLIqmiSZcdNmojHWIenEvArNdAiZ7ZstReqi3AryWzVCzNJ0+BGLaUZ5TwCWNKo1r769zFe1Jb5dJnf+O/T/WWDtL/Y/WxV7ecjvByHQYJrwTT3qxQiFxUuGdqW5iVGpgt1zp0sSoysLNOZ7Z63keUqvo6a2by7Wu1nAwq3Lrt2H/lxi106ryKCr3APAp1mzzpfWcc9XK3q77B/l5lWRyC20iDCZSyjtk6xFK6T9n1lcRD6Of3ZO/YGCWXAexcroloAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080UA9FDBJ9</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080DYSHS3SJ">
+    <div class="slide-header">
+      <span class="case-no">Case 044</span>
+      <span class="counter">44 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWQWoDMRDTrH2fQL5TsH9W9mfOgwr2seCgMs4GSkugh1aH1IddGAxCMyPJRnw91+1bCXiWGtjjm3qB36iXKcItJBNb6iWR7BrcDMBQMF7fzz2PU3rT9t73/OcYD2qj/uzer/WZQB41TWQnhozvxcwQI65XMzup+B7yaXkRV/kGuOQDJ8npTCIdgWzzk3uo9Av2EsMFgnUIiiq+TGxkW61uSlx4QMPbrdVThRsn5rv8mSq+94065ivKow2IPILvGHXlkc4nI4+Aif3FAO/a90bJCH9W8d2O/7AZlGFWZbhcIsqRgxcVX9z3Ofxq6vbZ/tk79gOPNZTj7FIsjgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080DYSHS3SJ</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080KNR98XDU">
+    <div class="slide-header">
+      <span class="case-no">Case 045</span>
+      <span class="counter">45 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOWWQW7DMAwEl2aAHJkfyT8L8jP5Kf2BdJexBWX30gTIpd1DKxi2TBiguBySNuL72pcnE/BXbGDLu5MDZRrKEJ2lkCn2ZXrPYywavzBbgQ1R0e2i1r6gr7/t45VtOxL99ruf46qQ9FacnPmVcbWZWW77upvZTRXv1zrAJjlUOo+o3uCsI4R+WbNpRF4Ahqhv4MQ4MlgnETKdM0ZOnZGCy+LN/B4Keyuq/oyT5paJPl6HdB5VBCfVujqa/QpJVFQhzwUontVUqeN5OZ/9vt9y7o++SudRPPwjp/BVNPdx5jcVrrnX1S+S5+lRyLP9s//YT/IcuKLGX2JjAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080KNR98XDU</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500805MGMDACW">
+    <div class="slide-header">
+      <span class="case-no">Case 046</span>
+      <span class="counter">46 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOWWO24DMQxEqQ+QkgZ8IOlmQW6mHMU3oMoANMbgancRxLWncFjow+aJ5HC5CfLX7vnJJfIuPoHFWjBc2uZoTnpLAyCz16AjnpE5XEmpi464zVRJea7nCeclE7h53+dnnf3FjN9W90h13K9WFTK5erZWjKlnwWGuxyFTuBaRFoxAWnNlcbeedR0rz07LswWuAL6qTMszhusIdelwBZGLwFlkeEs1V8+hrqgyT1cW65oIS9vO0hWA1UdRYqqeWzm/WiRd5X2POdhEv34u5HnUYd8i8nHrNC4wRBEdJI0VrxzzSLh6Tv/sP/YBsQ6xLag8slkAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500805MGMDACW</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080EOORJ0CX">
+    <div class="slide-header">
+      <span class="case-no">Case 047</span>
+      <span class="counter">47 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWu21EMQyjbANX6m2QUewNMtNt5hslG9i9DB7k9xIESX0qEhX+qCEkkJSE+Bkr/UoBfyUHDj/zqHnUnagWhFtJZnYoM8kRg+s5kYbZbDZMKcG91/56jO9RPh9VwnEJlPnupxIzrM8PEa+1zLZE5IjS0RX9JDbJMB1lEtpNacocpiO9r+Ph7jHl9tEszK9I056HF+5/jelzwmy3AXMyd3KrOAXgguyGCu1fRm2RfB4wOMEC+Yxdpj8sbh4lwGUL5Xo751HY/K3wDrtvWCSfr6jrcH+Oqjdd95SidztncQrC5V42gAps40qh+xW0B/JZ/tke+wR6x6GXVo715QAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080EOORJ0CX</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080TLBQ5FZP">
+    <div class="slide-header">
+      <span class="case-no">Case 048</span>
+      <span class="counter">48 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7ElEQVR4nOVWS2pEMQxzPtCl3w16lLyb9WqeAw3kLQseVPTyVh2Y3WjRmhCHbBQpcpwC+x2P+rRl9lf2DJNzmwYs6iNFZxkLsZs1gMeoGlwrZTfH92Z2lC7SuV/52Np9fxNGfYHrKJ+za3HBdOMdO+wQ+3m0OYR+NqyYJLsiRXyHeZhHAxoiZXwnRU5Ho+BUO1U6p1+PdEModcYaCHKX4SJYPhxB4i7DXX4eSWsFF1Vav1igMr6T/YhmPkXW+XkOls8JTcoiX9UrH7t5lPL12LT96Izst4+U9YXzfnEVkfDdsOXndKWfyz/7x/4ArjK5HoK0FPUAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080TLBQ5FZP</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080OBQAOGIJ">
+    <div class="slide-header">
+      <span class="case-no">Case 049</span>
+      <span class="counter">49 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAElEQVR4nOVWMU7FMAx9risxJjdyr8bN0qNwAKRkrOToIaf8BRgYwANkSFor0vOL7WcL8XHN7ZMJ+Cs2sMeuHQ5bBvMkX4wkSntiUzLc2HJwIXIANuXAkD357ceh/bcxvrSd/r17P2TbI7XiWElViJHG9xSR24MpIjWLb1nKMXDtxjzdALuxxyOT7f71HFwSJcrWYzcUpuHqrRhsnsvXSwu+sJDKNL49ELUHqJLxsWXlMyOftVcFZrWkOho1+tErBLgkXJhpdURqRJmpedUN7/GFrpryzL5QnrXbVaMxIasvrGW7Nylp8d0eCnleInw5svjiMV+Zl1CtrPlK/tkc+wa6m5ZvvQMvXQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080OBQAOGIJ</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500806GTGG8LR">
+    <div class="slide-header">
+      <span class="case-no">Case 050</span>
+      <span class="counter">50 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA4klEQVR4nOWWQW7DMAwEV5aBHpkf5Cny0/mV/EC6M9iAknJpz1kULQ+ywctqtUPLhfhez+NHC/grPbDnWunsbTZaiPbSSGJc5YZK5jYOjS5KuWAz51HOX5bH8aHeKCtole6ZaAGn8XnvpxFDy3NvVcozuMvD9luI/LY0uyR7C9PpwrZZAKE7Z5/D20hfxkPFVaVHooUw6nSZX+ZKBxbSWp4zZcYMOqT3Udaa4lDxTGasObnmOp5728naClo4v1hcTbBF+R77Oa50Cnw9Lkjz9TCf0rJ8c02M37dSKHTLP/uPfQFzzcC0s6+3OwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500806GTGG8LR</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080BGWUALL8">
+    <div class="slide-header">
+      <span class="case-no">Case 051</span>
+      <span class="counter">51 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWS27FMAgcQvbkBj0KvsE7U2/mdyO8tzUVz68fteuyaEeRlXgzDGEAIb5jHT+ugL9yB0aeGiC3dJ9FsXgyWsdoSmYYRw0vRBrg+TXkLM79aPLSf5njK873lztHK+blB70RoyzPdxEB/ASWiFxVPtoIzEdhkyzxERjOcMD1YWRGjX9BdrJP69OYAViZ3nx0s1fqDU+xmWefKNTLruyavxhKJvtRW89GzdFQluc8NVyZfbLKR8fnPNoYraxPChzjtq4gIBal+4a9ztHWVar3CetiOSNWWZ9kVrJGVldh38Der1DqI/lne+wbbqukleF4btIAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080BGWUALL8</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080NG3JJY5Q">
+    <div class="slide-header">
+      <span class="case-no">Case 052</span>
+      <span class="counter">52 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOVWQW7EIAwch0g9kh/Bz6L9WfgR3EFTGaIetivtpZ1DiyJAVqSxx/YYI57X2L6ZgL9iA6vvoaYeV+ipi3xJ5ERsOZDuxqbBhVlGfOwObbuY+3b+PsYrW7z8e//fT9l2L615hApEosniLWaGltHyMLNDhRtJsgPjgN94qfo3reT2yMCr6/q3AOie4jLs/BD1L5zYGSkrfCe7Sie7k+xUT2ghLlKoywEiqnDXqilwsa2pq6955BcHlcVbfR5NsZqtpIs3AYtkFw1VPW/36SKZzc4h08l7leCFXXS6UWd+eYUpIErdwBqCUNaz/bN37Cczda2ZvmC6hgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080NG3JJY5Q</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080G1UNAC09">
+    <div class="slide-header">
+      <span class="case-no">Case 053</span>
+      <span class="counter">53 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA4klEQVR4nOVWQWrDQAwc7RpyVH6Qp8g/K/7Z5in5wfoYWDNBLoHS9pBDMoF2MYstDCONhpGM+H628iME/JUY2POuPYZ/lh5DlEuQiXi4zJXMNIoGF2YzgOsRWG0Sc+/L9HKM32Lrx2P/PTNGNviSX84h13PtIdSzvck3wB7JLYI931X1IpuLGPmAZCVVuMz+JjrgTYjbvlCdbjl0POMu5t2oi86fx041ye34lnkUaR1FOY/O9WK1o8rnEZzbaZHvAjGtNtY9gSLE9badWpZss3QeYe8szvCm1TOGN6Ge7Z/tsTfB1YKhTdvbPAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080G1UNAC09</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080HR46TBE6">
+    <div class="slide-header">
+      <span class="case-no">Case 054</span>
+      <span class="counter">54 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWMW7EMAyjzgYyaugD+hTnZ/mavtIfyOMBClTICTq06FgWaA0jMbQwFEkrkvi8zseXEvBXakivZ0sDxiqMIOGOzGw+QrNlpnNwqyayQ21zYEon9bl/nJ4yfkHzKcWXh9tLYqBrni/eNTG5fvbRnOvne1nofQpWjpqPStAVIqXhVpPT6wMABK/PFii+oXYRD06O5rE5nrJXhF/tZzC+5+vl5GVprp8doQk1pq+w5tFiXTuY8yizOqyFHixcLH1Xmmh+xo2blmuz9H3c73mccnRge9tB1deuq5KoL9Y8Aq77iuRn+Wf/se/zH7yHZxk5BQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080HR46TBE6</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080GD01NU04">
+    <div class="slide-header">
+      <span class="case-no">Case 055</span>
+      <span class="counter">55 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOVWy21EIRDzPJByZDuCDlJSlM6glO0A7iBHw74XRcl5HSkZIUBcPB/PGCO+2zp+PAF/5Q3svocOpEfoeYp8ySSRqqOT7sahwYVZwXjDKBgWxblP74H1yRhfLV6XvCyLcQnE8ep7IoYsz83M3INRlpndVH10Wr0ulPQR2HPwPvI1E0OX9W9btzZ9dLSXe5myeUUCO2RsPidZnrGLW31YsSpxw14PU9UXJ4l7RuIOWRfvpx7NX9Aj8m5CPYquR87kVpBXBFJfWl0IsyHtpB8C3OM8h83thGvxIcLlbtuIPNFU9cXF50t8RXy2f/aP/QC7r5e6otJilQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080GD01NU04</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080KO7EBEDC">
+    <div class="slide-header">
+      <span class="case-no">Case 056</span>
+      <span class="counter">56 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOWWMY5CMQxEJz+RKM0NOEpyM8TNfBVu4JRfCvLKCQgELTvFrosUbiZjv1GSHO912z5awF/pwS3O7Oq+rNdBuksNxX6+pZbd4xobRxcpNcjlYEBPhT970d/X+Oj1Nnp7673W9uVeCbSAIprEijg6l2er2SqRZ/ijFtjuTtK1cJrdZ4jqEJau65RTIOY8eHPWbJh+dRkfrBztJx+97UfspxnhjeR3iEKCq4k0l+c5YYjyuLI4s4flxfZg5cifIVIez1bvm5UIFJPnqBAF5LIfye9RAmoBDtcG6n4VojFk3n6x3qN4F3g8p3/2j/0B0gqxiWoon/wAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080KO7EBEDC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080G75LOUW7">
+    <div class="slide-header">
+      <span class="case-no">Case 057</span>
+      <span class="counter">57 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOWWQW4DIQxFPwPSLJ0b5Chws6o3o0fJDcwyEqMfmUmqql33L1ovDPLmg/2wScR3O7YfIeCvxEAPn8nsdQXqFJ2lksRIxyXU4xibRhcpNVjPDoxURHkun7uJXvQ1H29ltF/W+Gol0AKK9XT1YsTQ8uxVyzP4shNskiJdj5tmchrpdZpKl4T1yLZFy5zCPANnZVeVhXmmYyU5vEp3W2+p7v5RjPutHamJ3tFpXicA6zquPHxmny+2p3IeATt5XN/vF1m/qkCNYSTleXuuFn0DJrvv9lxHO+fRflPx7FHf9dOIja5fefjsgbSQ5/TP/rEPFMyrdMEEWLwAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080G75LOUW7</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080K0ES9CSU">
+    <div class="slide-header">
+      <span class="case-no">Case 058</span>
+      <span class="counter">58 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+UlEQVR4nOVWS2oFMQyTG8Nbem7k3KxXyxylN0iWD/xQcTpQaLvoovWi9SJkREAT+aMI8TEeT58g4K9g4My1kZy+AY+if3EyxVYbm71OA5EO4H4AS7Ra+1N/n+NLrL30b537GUyztABdnRhqxCq77ykigOvqDxE5qvroigG7dlHUvx422nROhBXyMps33jc1cyPv23JkeZveSFiZzilvAMm+BY+y/MJhbGTLEV3F+xYTWdL7M0r9aESmOI0pqnRmKpwlHZbsUTUnZedXCQ2IjdL3xpL7cWb/rl7qR8Zb+tF5m7V+lJNq+HqOIj/CVc8zU8y6epZ/9o59BWiJo0O44AKPAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080K0ES9CSU</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500802PVG34IF">
+    <div class="slide-header">
+      <span class="case-no">Case 059</span>
+      <span class="counter">59 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWSW4EIQwsN9ydH8xT6J+N5mfkR3CnVSPTtBQlinLJ1CHxgcVCKmzKZYz4bMf2xQX8FR/YYkwxlukoQ3SXQjLggETGNTYNLsz2teuWxbn3R/b6YoyPltfc7yPvYlwC2atF1ESX5fndzND31HCY2ZuqjpbVa0FJHYEtKugsYbaiql+cWGwYHiEnWbysiYRPxfAqxOVSy4Auw2XvizRTPSU61kPJ57aSLOQVTjLHy6JAlOft6kfRFAJd3o+OG+32eBXGt76CHmr547lf74PD63Aetqv+OWXJFMrwquIVLj5PqdTx2f7ZP/YJEK6cNnUPvaYAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500802PVG34IF</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500800XUMNIHY">
+    <div class="slide-header">
+      <span class="case-no">Case 060</span>
+      <span class="counter">60 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOWWXWoEIRCEq0chj703yFH0Zktu5txIHwM9VKidDeRnX7cfEhlUGqHs8tNpI362Y/sVAv5KDJzqy2zwM/UWSXtp5N3sQmobW44uzDp8xOpYVpO9X1Z9PFnjUcy/cL19W/GcWBVat0HCTqxsnoV0Hs/g2aQusEkm3aPV7bLbq2yu2A/rST6T4ec3ALkdWbpAKyR8FI4sn8EJcgSaJlNPVmTlW8gyEWjhhOfpnjxLnYNp5zvVCyfNlXIk6TZ++gxnHs+z3XgeEs3jebuP61om3u16XLJrkMN6xf6S+N+nTH4LQFBl11eIk+oknu2f1bEfYyiqjLQH0c8AAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500800XUMNIHY</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080SYODRT6X">
+    <div class="slide-header">
+      <span class="case-no">Case 061</span>
+      <span class="counter">61 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+ElEQVR4nOWWQW7EIAxFvyHSLJ0b5Chws7kaOUpvAHujX5lkpFG7rhdTL4Jg8833w44QP2OmX0fAp5yB3b+5F+h19WJBuRSSwOnqpKeRYnQhUqHNAAzZgr0fz8dX/WON99juVZscfYvVpS+nU6XEiObZkY7jGbzC1R1skkHvaFTZTzloy+0pNchnttyLaVs7d9uC6lvujsGW2aJ8BnsxFFuAsXsCFsUz2aDMHaaERunePHuJ3ee4+uJ6v8vqYkH3Ta955DDPo3mXTmE8l0yvL+N4Tvc6xEeDPOceO4+AuXfgfFjsPFLKqNAFWYrkGflumDH1lX/2H/sNIMmjQHt2YqQAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080SYODRT6X</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080LEVJRV3T">
+    <div class="slide-header">
+      <span class="case-no">Case 062</span>
+      <span class="counter">62 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6klEQVR4nOVWMW4EIQy08UpXen/E/Sxf8z4oEvRGE9kkzV3adZG4QDDNwDAeYNBrrfYGEf0VjDBiFBhGT6B70V46EGKvkwSIbbQaXmJ+0vx4wGjyUa/9fN7P8Y5dv2B0LwYYUZpK4XW8FzPvxWLms4b3IM3kmOSTUJcbtNtWYJLdJIDX5UbHIMmJjJrcSFOpJSm5opAXrpaR1V3NtU5nGSFvnFQRrdRKeHeNLThqfUWSpLW8HQg7xaLOV+37PaLL1W7keK3jZ9Ifn2d0k1rxP2edfe2gboX3i0wPWF1ujBglu9jr/Mz/7B/7BVXTlg9APUEHAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080LEVJRV3T</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080VLKF3X8C">
+    <div class="slide-header">
+      <span class="case-no">Case 063</span>
+      <span class="counter">63 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOWWPY4DIQyFnzHSlsyNzM1yNThKbgC9kSMzSZNNkSJxsUthM9ZIzz+fZMjwfFb6FQL+Sgw23LI1lLN00aBcxMzcXiubeRopRhdE1e0BTMrhvbfxfY0Xsf7mf5/jSsyMT+vzDeOqExGAPOsi8imnAF3Y46DcLxpT76zr6HmSoq/jSxovjg2gmEIUAsAvKajPAHhAi3PlOaQgXbO2kQZK4zCepzO85wu+XlYwz0O0NN2fGr6PeIDjdOUcrgK75CiehwDCD7qieE53P2sGMqCzhu6j0rbrP0F7P3ur3e09OC86Y99XQ3wvxPFM/+wdewN5Y6ig64o/wQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080VLKF3X8C</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500808UD8JDMV">
+    <div class="slide-header">
+      <span class="case-no">Case 064</span>
+      <span class="counter">64 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOVWQW4EIQxzBqQemR/Bz/Zr4Sn9ARwrZeQqsJWqznlz2PrAML4Ygh0Q4i+u40YB78KBw8dEouytVwtaSyUJdA5X92UcMboQaQAygCk5vvazvV7jzlW7c79wvIAjFbPloii0ON0uIj6d7RKRMypHT6gtY5MMyRE4qhVNa7QSqEu1oh7eUQFYUN8AR00uChTurmVRfv46PUQ25Tp7+mxRvtLVId1Xq9RRdd4YcF+tX4u9j9I+6MAc0UV9vrYc52egPs831s+O+cjoy9Uxfv7hiiZqRv8Iuvezl3p9rnPYfNiMfV/tfhXnZ/ln79hvjayo/J89MFcAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500808UD8JDMV</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500804ZR83NQF">
+    <div class="slide-header">
+      <span class="case-no">Case 065</span>
+      <span class="counter">65 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA5klEQVR4nOVWQW4EIQxzAGmP6Y/g6fQp/QHcs3IVZiu13WvlQzdCzMgXk9gJGPE77uUJAv4LBq7cK1lXP0AP0Vk6SWy72PMYRcMLswGfubY1ee1DwPGM7ZHrJ/Y9yh9jLa0FNJ/mqzmxtX5eXetn8BHzMjZJUR/t0fZoV+J73N9UdT4TI1vYc2SGrM6rA72u7KNUWVRnJK+nvuQMp5KXx8lfI1rr59UDCM+UQ3sfhU+eLg5Zncma+ia13M+9cqr9jCRFmlmmb3l89+Bp4dvHgFRfXj8qfQvwbmY5pU/WN9E7x17sHfsJpE61pi8RzdMAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500804ZR83NQF</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500801XC0FPUB">
+    <div class="slide-header">
+      <span class="case-no">Case 066</span>
+      <span class="counter">66 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWMW4EIQwcL0iURMp3IsHT2afsD0zv1USGuyZJkSJxkVgWhbXS2DPjBSE+xn18KgF/pQaqn4k0tFVoFtRLI4kpeaF7G0cMLkQ66kiKjY5Q7hvq+G2ML2pTMPs3vvupWnZrAbmOt1fNlZixftaWNNLP4DO2sUkG7dHsefaM0wef/X4J5dk8nWeL43kkcuVwlYN4hitb/SfpI1dvwIL29+QlRVHIcvVbepC+OxSowzyjeH7cRw66t9iCcBuXr6jwecP8rA1oSd3YjPSzLlwOe7Ad5ucVs5cldLmi/PzU15a3o/Q9gFNkXb6VeU99BODKP3vHvgMTfbDal9N9CAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500801XC0FPUB</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500804TLV05I5">
+    <div class="slide-header">
+      <span class="case-no">Case 067</span>
+      <span class="counter">67 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7UlEQVR4nOVWQY4DIQxzBqQe0x/Bz6r9GX3K/gDujFyFdqdSe15X2o0QErmYJDbGiNfYt7cU8FdyYI89dbCXlShThFtIJrbpTCS7BjdyZhWjxmlYFvfeW/quH5n5fv59jGfkGDGQx6UR2Ykhq/dqZnGDUXczO6t09IiWFrFJynSUSCwRhZREOgLZAEyUoHQvKv2CHdMJBGKcXdPn7a7c6e2oHar5To/5/jzUsvmu6CWgpXzG4UfzE37EWDI/yuFHCCbHmxV87uL/BpcFR9s3Ie6ou13y3Ys3ES7Z4O3EL+CqqhcHn+FNyGf7Z//YGw8ppsfrKWuKAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500804TLV05I5</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080KQLXOYZG">
+    <div class="slide-header">
+      <span class="case-no">Case 068</span>
+      <span class="counter">68 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA4klEQVR4nOWWwQrCMBBEZ9uAx/hH2z/z19oPEpKjsDKyTUVQz3PQpTSQy0u2Mzs14r3u08cW8Ct7YMv3zDXquLqH6CxOJrEknXmMScOF2YJ+CQDdirz3RcDAFxr7IuYyl61cgUp0WZ83MwM8nWtmZ5WPRjVPMe8VIv/68G82ebdSqOYGyYAnGj43zdwAnzgAUanjNifXfJpHzWkZ8vkclZBxR7VDWkpdYSQCKeRORx715W62R8MizSNsr2E9ibijTs3nBtRVnEe3gjDMwvtyV3IBTlxV3xeHntNHSj3bn/3HPgD8rJohpH3TbwAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080KQLXOYZG</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080827E0NAX">
+    <div class="slide-header">
+      <span class="case-no">Case 069</span>
+      <span class="counter">69 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA50lEQVR4nOWWO24DMQxEqZWAlDSQA/giBqSj8yq5gdhzMQElx4VdZwpbxWrBZsSZp0+BPI/zeCmJvEtNMPNbgTr7KvQgraUDEC/n1SqQyzg4ulLKELVU9NLo3jcf/67xWvM/UZJuS7REmtrtezaFOJfn2bk8C+7DYoENgLSPfDQfTVazPs4L0We1UBPNIzN4Ppss0VDLlEk+C6aEAslV/hB1++L5gTSX5yUaGTTP530fPXZxsHwGUGEbMB7PMzPdnabbVK56+qxWQcv3uM8+9vn89TOEm29kvyDmK5vkfPDweC4f9o79BbZGr9Z4VhjXAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080827E0NAX</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500800GAYLVN3">
+    <div class="slide-header">
+      <span class="case-no">Case 070</span>
+      <span class="counter">70 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA60lEQVR4nOWWwW3EMAwEV5aAPJmOpA6upnTGVtyB9AzAwx6o8wFB8t9HTjAsmZ/FkiPShfi97sefEPBfYuDMd6UH+g70EOl2knUijJXk1OhmrJQB83oOrNJEeW6vQy82r49DqLtuXANaXQLNPP0asbQ8z16nlufXgl2H0PC8RlujAZFVHvdPVZ7pYXltK7NlhrBvAFncOneVRXkG6c9mFZbGpbp0bMWNtJbntOxPyyGdR0y09hPKeUTPyprLeUZCpeP5uHZjPUvY17eobxzXnpO3N+DjHDJd5j3ydIqu8osf8yhrreK5vNl/7AOcFq+kmMjTewAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500800GAYLVN3</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="20260515008085S83JL3">
+    <div class="slide-header">
+      <span class="case-no">Case 071</span>
+      <span class="counter">71 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOVWQW4EIQxzBu7Mj8LX+jP2Kf0B3DNyZaandg89dHNoIxQkC8mTjHEw4mtcxzcI+CsYOJULR5m+AY8kXidZyGjKnDm8wsw6ltW1c3rvo42XczzDynv/0bnfwap+sbYtqkastHofZnZ/wWVmZ1a9bTvHQiwVnuUb4L62hYMUrS7UkcB7KLUR2h6AY/Ukv+IQ3aaWdST5Bji9TKjJjdFGtLw+Xyfq6rE64Fl+Bd4xvVDFZumqYp2ScYz0OeiaR5qGjjxdHZ/zCF749kKO577hkvRWdapv7Kjw26iR+t4Y3CvRNyA9i31IV0l9tn/2jv0ASNOT1pD1f+sAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">20260515008085S83JL3</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500805LSTS8QL">
+    <div class="slide-header">
+      <span class="case-no">Case 072</span>
+      <span class="counter">72 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOWWQWpDMQxEx/GHLJUb6d8s5GbuUXKAgr0MqEyRnWTRrDOUVny88EaW9DTzC/Ezvg4vV8BfuQN7npWtcpXuIXqLk8TYY+yVzGccBHk3AAUOa8X6Nk7183fN4x31Zowzxy7OS2CzS/bZiKHluXvtLuQZfMQCm6Qob89Kc3mN7B4my5tNZndY6kbIdMPaHa9Ravcjm4grMoxMnWxhrLL5MicL5Ign0lqeO8La/HRcLT96sh2qPSJ5b7I1Fc/IDcIUK2trkUPpFXaJed5OWo9KM/IAjtddlpdsUz0+NriqXjz9aE1ZxXP5Z/+x3+WkplzSc7E4AAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500805LSTS8QL</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080EOUHBOPN">
+    <div class="slide-header">
+      <span class="case-no">Case 073</span>
+      <span class="counter">73 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOVWQW7EMAgcQqQe2R+Rr+3PnKf0B/axEitWOO6l7aGHdg4tsmILRcLAzGBJfLTH9skF/BUfstdXs2n36fAg3cUzE/C3GzSzrrFx4kLkAM7dGobs7Nq7vh6/HeMr3xnf++/ncOWZqd01c/aXhqtTROo4joeI3Fj5Lmth6xSsOoc17YCt0MHSDZ20vXQjSLqBS69gCStcwXj5rpUNVXBavh5wndWepWbFvaz71V8WrjYMEZHd7gFox87WK0TxqBHx7DUU5vxNHp63tY8ahcXfcVDnkbWiMM6Xzu3vO6RZ8wjrfVUqXehSEo/kn71jn3C/suK+YbqaAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080EOUHBOPN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500806HDO4HA4">
+    <div class="slide-header">
+      <span class="case-no">Case 074</span>
+      <span class="counter">74 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOVWQWoDMQwcWws9KtAH9Cnen5X8zHlKfqC9y6jIzqnpoYd0CokOthELoxmNVy6B7zHqXQp4lhzCchVrEYt6c1ItbSGOEyQiy6gcXJSyQ88bgKNsZO2PXa77H2P8lNM+PvovvntUbktrzS17rIGD7WexRvQzYoXB9XZ0Et8G7dBwNInuRL5A85Q6RRaj4faE1p7Q8+wsXOj8TU2PCbG/YnmDUmGNbHSl+jmip860/lquk/IEpfG1nEdiWYAvtSsJF3lzJzTPz/W2HwUapXyOE28urHBcfLu8OXceaYx3K2r/8r4Snp/Li71jvwAI7rBkM0rrJgAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500806HDO4HA4</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500807FSOO5VA">
+    <div class="slide-header">
+      <span class="case-no">Case 075</span>
+      <span class="counter">75 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOVWQWrEMBDTrH13fjR5uvcp/YFzXHBQUdxSaHvooVWhNSF2BoOs8UiTIN6P8/YhBPyVGDj0LiPRFvWcJtwkWdjLyEJyeHAVi9iBfGzAEdWc+yNq6z+M8Wksy9P+lX3fFKu6Yk33Aqi0Dhvfe0QAKeVGxObCbSQ5gXODVuwu/SZHAinE63N6cMkyLvdoEi8aXb6BieUYmL/BdyInjHzZV5JllTqDj6/Ga7aNfQFXP1qp1jGmyTeSJGTOsg4cu02/QBapWGRddXV7mVuvl2W5+Na3ZWM09YjTxZeXQz5iVyv03S9WPevx6Sj+2X/sM8mVn8cfB1OrAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500807FSOO5VA</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080S5WU8AQD">
+    <div class="slide-header">
+      <span class="case-no">Case 076</span>
+      <span class="counter">76 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOVWMW7EMAyj4gAZnR/JP7uv2U/pAwLY4wEKVMjJDdfO5XAVgijRQpOmZIvjZ5zLrxLwKTV4j3fyiFlQI61FJ2ITKYHeOXxXAAINyoZ17Olga//c/x7jne8V21G4vlJ3T12T+9xfmq+aiMTnKKeI7Cy+d1SbxnZ3Y+lsuaZQu1qm4S5Xeu4N47EOOaXQ5lWKRy9rIbN09oqQt1qumIIbbz7rtYDUlTWfcdu5q0Ft/hr3PALmRhP7yGNehbWQo4uNhQto8nqzJvl5ufMolkNqG5z+fdWyb1/F0Dbiue+RGtDW42GDe78KJ1fn+Vn+2T32G30krjIFdeonAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080S5WU8AQD</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500805NFG8ICC">
+    <div class="slide-header">
+      <span class="case-no">Case 077</span>
+      <span class="counter">77 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWO24FIAwzH+mN9EZws16Nq/QGZM+TqwCtqnauhzYDBBaTxHFIxHd75h9XwF+5A1eshRPthN5d9JZOEvbqNgoZz8gaXKQ00GacLFVRnuun9+DHIQtw890tuY1fxvhqNagF1MbUVm2Eafm8elldyGfw2vR2PdfU10a1UYHH24CN54sqz1sxPKQjdMN1eZ6OXrih13ayBpeOzgVvUWIh7jxhAofSWj6v7rghu3QesXByd7GLcDsDNEJGC465ChdR2eigiFfGq7VxOSPPW7VcOo/GGRKhWllZ33nFWVdfnHl0G1nE5/TP/rHvGKW8e0dHMMEAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500805NFG8ICC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080XVMY3UMP">
+    <div class="slide-header">
+      <span class="case-no">Case 078</span>
+      <span class="counter">78 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOVWQY7DIAwcB6Qe6Q/6FPKzfI08ZR9QCY6VHE1lUvXQPe8cthYKNhfjyXiMEZ92LL+OgP9yBvb4JjYvZ+nVRXepZGTMY01kXGPR5IXZCsABDMt67Ev7+xxvy2/vco+qhbyqJFOviZz/V8ar3czCHethZldVvS9rPolN0lU4e2kp0I4W1uVlSx2OiljhuAznDhSiBK9QZDhPkTyDCbirdPJxRZ6ikX62Q8znPnk1Q9fOo9QRS9hHnHoVQYkudlVeIETyNBWfl9c+DNgz4GOVzsHCPDbHfum6OcjY9uPWMTYf2vdVrzEXdHy2L3vHPgH0I659Ew7wwAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080XVMY3UMP</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080GIA7CXDN">
+    <div class="slide-header">
+      <span class="case-no">Case 079</span>
+      <span class="counter">79 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOVWMW4EIQwcr5FSsj+CH+RJeVN+AE/JD6A8ySufTHabJMUVlykSCoRGSGOjGQ/i+LqO7RsE/BUMPmJXd6AsoBipluJB2i03dY8yNg4vROrZ7JTEfvuefp/jJ6zoR33k3pOwFNIC0nxFbik7Jq3fLiJxnPUQkZ3lo2shnwcj+beEg5aLLTN5cbHHyDTS3EA0mF29IfZ4bePoatY0622Hjn7sPdy00fpt6m4oOgprPuMU8fiMhlXGRs0j9VC1En3k7jpWAbmx9Jwij1CwTKQDkhv1vzEjAQ2wydHzheXwb0J/Gdw8Am77O+abkfIIp55HmJeoZ/ln/9g7lnufWzNKX7YAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080GIA7CXDN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500801JWQNFNT">
+    <div class="slide-header">
+      <span class="case-no">Case 080</span>
+      <span class="counter">80 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWMW7DMAw8SgYyMj/IU+if9WvyU/oDaSxAgwVlJwHSrL2h5WDZXI53PJOSwGvs5UcK+Cs5RM9n7QY9qJuTarGIRPSx1ogso3BwIbJC26INQxay9kN+H+NdToOLu6S18thqn+iD7ee0NM/PiCM6XM9XJ/E1aIO2iKjRnMa3myPJzq9U23m4hhS51UjWTupvg4ZrihwdlYcbp58j0bOGQvUzYJMyrb/P/zdBSXzLYx/tV+y3dvlcWfPKpsJ3a5F8Vc5zSO3bl3zsV95eOEJgG7aL0/ZC9rceQ3KOaKf6GWkwnp/ln91jvwH+B7NEyidPYAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500801JWQNFNT</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080F68ALXXO">
+    <div class="slide-header">
+      <span class="case-no">Case 081</span>
+      <span class="counter">81 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+UlEQVR4nOVWQWoEIRCsHgf2qD/IU/Rn+ZrzlDwgoMcFpUJrIJDksIekDokHbZqB6iqrxzbi85rHlxTwV3Jg8z00kJt6HqJa8kLM00ogvYxDgHsCMGTEehJnT+FVq32338f4LhfrPT3y3U/qTD8yGhCJLvZzDi0L/Qzu1TCWsUmK+qgXS5c91VvDiWtaEenMOjZrF9zVHipcsi5EBI81Om9f5RHrjoMUF+5nckQiqnwVl4eBu5XQLr6ofPXBt7qpRHzB5m3riP46rOAQ4QJOdhUg8/PxfvYyE6Y9z6SeQW5+0Zfvh/B+WXcfaf8b8PlqPUkqP9s/m2PfAAror7iMP0D3AAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080F68ALXXO</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500806YWOIY73">
+    <div class="slide-header">
+      <span class="case-no">Case 082</span>
+      <span class="counter">82 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOWWQU7EMAxFv5tKsww34CjuzUbcLByFG7hLJI8+clNYwCxYwF+AF45iVXL8/erEiM92W76EgL8SA6N8C2SfpXuKzuLkKXYj6xiLJi/MNvRRu91Wsfb79fdz3Iv1p+9991OxtdCqxRFAJ3Yxz97ChTyD047/aFqK6vWCuTPhjSOF9aIzK/UASu2U5YXXxOBoHEqdWxRdp9flxWwxw2tEd1Xed57RD51l/Y3yhdOheYrqXT7uoxawx3F52VTzyg+ei2Qhz8u57puZvdr19iB+gzjDVzxfRPc+GNXfxppXc0SnmmcX8mz/7B37Bm3lsHYGYdf6AAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500806YWOIY73</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080AF1BPTSN">
+    <div class="slide-header">
+      <span class="case-no">Case 083</span>
+      <span class="counter">83 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWO04FMQwcbyJt6b3BO4pzM/RuFo7ybuCUSIkGefdVQEEBLsBFIlmRnBmPP0J8tLV9cgF/xQd6nIUdekG3mfQXI4nxgtEKGd/YcuJCpEHvAXlIzebeMNpvx/jCN2R+691P+WpIC6hKUa9KjFw9uxW3RD2DT+uXsEkm1dFodbQKRH5HW0cWz4x2Qcc8+8ZM49kNyuJGP7OcxDNOpJ1uEwE5K+52ihlyoJD7oy1pafkNi2qyqX1qHs/XPCoeuS6eO4+AdeO63d/S6sgNsADLUHWmrsK0y4GpaXi3533O/Qrsjyw9e+S3kNAezTlvz3kVkWv+1tH2pD1H/tke+w6oDKLT2Jpg2AAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080AF1BPTSN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500803PXEF5YB">
+    <div class="slide-header">
+      <span class="case-no">Case 084</span>
+      <span class="counter">84 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOVWS24FIQxzBqQuMzcKN+iRnnoz5ii9QdiDXIU3VaV23SzaLPhkYzB2ghDfYx0/UsBfyYEeY2EvbjthM+ksRgbZU3sh4xhHDi5EGmAVwJCazv06fx/jK+rn4uJoybgE6mhl9qrESOP5EhHAMNoSkTPLR3f0p7BJpvgIdAsHefhoaiIuw7YTBt0uTqob2AxHFLdCQvN4hnaShR1BeM59bx+J+jq9vL+u01L17AiG93bm9iMoiyM0duTgWjzuRof2PD27AVbYn4bK0vNxz+NRd1+Yo6X2QX3burpeEvs+79Jx1fGYyf8rj2KVqGf5Z//YD2ZZpMwhsOnZAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500803PXEF5YB</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080GB1XVNGC">
+    <div class="slide-header">
+      <span class="case-no">Case 085</span>
+      <span class="counter">85 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWMY7EIBDzBKQt2R/Bz+5r5EfQT+TTEKq7K65YudilSCIr0mDj8WDEz3UdvyDgXTBwxDOxO+oCqov2UskQOw0kMrZxaOrCrAHIpWNaVmtfBTX+wk6f7T//vQjLYS0gz5a850JMGd/TzELn2S4ze6r6aK/uZX+5qH+rl54GUHZpV+WGF3rpHGFpF+UGVrl6h0YiUVR8IyG32gjBVXzvkGRfrIO7K/086j0XlL5C8A1r3afsKl+RDIWXq9V+Zk/s1Pn52O/Zrufq39mk86gQs2WcD+HcZzTRmQZ8frn4fjXioIV+tg+7x34D6nar1ud+89UAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080GB1XVNGC</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500809BTSOY2M">
+    <div class="slide-header">
+      <span class="case-no">Case 086</span>
+      <span class="counter">86 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWQW4DIQwcY6QcQeqDzM/6NfYp+QEcKxG5cmhzSHvooZlDwoEFa6VhjMeDOO7HJf0IAc8Sg4+YdQBlU7dFOou5O4qv2dQ9jpE4uBBpwJFLx5RMzv18fzzGr7FDz+0v//1TLEdp7Q+upTVpfA8RASyUKyKVxXfLZ+LjbVD7xmyYTSpOZwnis9H6hg6s0j3EayHkxMG1Ff3KfGDtbaLgui/YF1Mw+QKlA6YD6q5EvjFGLNSd5Qu4+VEkeac9cXBtMw1X4tVVDj+CYdaVoQtSBvW9Ufpp4FLB6hvptvq+307Dde+R7YqwQmKfxLWelaojebF37CdYBpCat9aHwQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500809BTSOY2M</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080Z9NEVR4J">
+    <div class="slide-header">
+      <span class="case-no">Case 087</span>
+      <span class="counter">87 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOVWO04FMQwcr7c3N8reDHGzvKNwg6T30yAn0iuAggKmeESRN7FWssefiY34vO7HFxXwLDpwlPTRyA29pciXVhbjzexystw4NHZhdhXM6Jh2imM/r/PPbXyv8/frR//9ju6s0lqfnEAQU4b3Zmbbg7uZvaj6aK/qpipskpI+AkfjaHWKvq8pwtvJnsGijtEQMrwlfclU4h21M7qTCSFeVpARnaM5K9qprWdWoql6F/DIb2V2uZGyPiKdXdtHZ71HaJivxM0TFkMyb2CRRiu8RR2y/B6Pky/WIjuk+SWCmzNTO1/log5VnO2fzbEfqUOtbDfOQMoAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080Z9NEVR4J</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080ZQK99PZP">
+    <div class="slide-header">
+      <span class="case-no">Case 088</span>
+      <span class="counter">88 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWSW7EMAyjYgNzdIA+yPnZfC15Sh9QwL7L4EBxZgq05+GhFQJ5uUhURNFG/LSx/LoC/sod2MKnhsQJvbool0oShY4IHWksmrgw24AjfLcsqnO+1r4lfx4WQdzltfO+vT3Gt+VorVhq/gIK0WV4DzObh2Fmq4pH01qAneYi/la2CtR0EplNw98ZN6bHlUBR4SVTC7CO+IR4EeFIj5GlxLvHhDwrnE7sru3nxD0GtUgX8NSj6xdLecSosKMK+yqHHqGir+RxI6w06Xuj7MPuYw1hglIHUQ2Hf4RGDBVecgcOB26fmwovXv0cXscj+2fv2AcJa6YJVwMPngAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080ZQK99PZP</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080M9I8JW6N">
+    <div class="slide-header">
+      <span class="case-no">Case 089</span>
+      <span class="counter">89 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWy27EIAwcY6QenT/op8Cfrfpn7B/BsRKRqwk5tXvYw8aHrYUisCINfswYcfy2Pf1xAe/ig3d+tZdpK/Qyg+5S3B32lQF15zVSDC5EKkado2JIDs69Ne1XYzz2yfbcf6/xZbYWkMdNJ7I5Rli8dxHhdtRdhFGnAFz4aU07G9vdQ3gE70XJI65pTiKnGFzMA/0MORAXKCtwni0mzwnM7X2aZ9a6XYPxwNxXWZntU6hTYD934mpcPycMEaEsay/f3FaEzqMmGz7i5xHY2NSrzxamz8v2DbAePY/GbbE4qr44lMr1YBOsxeoVwt9X8s/esT8vKJbFxVDMWAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080M9I8JW6N</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080ZA9X26L1">
+    <div class="slide-header">
+      <span class="case-no">Case 090</span>
+      <span class="counter">90 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAklEQVR4nOVWQW7DMAyjYgM9Oj/YU+SfFfuZ85Q+oIB9LKBCg5ylKLZzWWDTIVB0oUkrZMTxs+7LrxHwV2bwHs/knrrOgRrpLOoeYt/WQI9jLBxciFRgSx0Ykkk650cnpec33LmmS301xlPlWC0gjzWVlotj0PhuIgIoRr2LyMr6jo6ycjQLBberlZa6escObSxcn4ghNWAk38hhyKuertUykkFKo/gz3NuUtxmAKbix/NmKp4k7LZqFu1dXxBXHq3HzyBALFs1CzKMRJikf7SaVlb8a5uxtZ41C4ztrnAMUsMHhe8zK55R6O3VuHgXTLY2zkfII3/s8XZq4z/LP/mO/ANBPo8AclDfoAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080ZA9X26L1</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500806S08GM3D">
+    <div class="slide-header">
+      <span class="case-no">Case 091</span>
+      <span class="counter">91 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA4ElEQVR4nOVWMQ6DQAzz9ZAYw4+Or/Vn9xV+EMZKQakSYIEZD22EAHkx2MahOK6zvW4Q8CsYXONcPSaBZqRnacG4lm1KduVpUMoM8VGBtQx07bfpeY47ts51mS/Yw7lq7l69Qzz95eTqzLO2qi0BFu85kOPGWDpXbfv3GyILi9e7STdxIHQ2ns49LW5V02Wazh71aFGV8dZE3h50u8sRaW6ed8Y02rj7CGFxHEbtKzcA0nl51lC4KkxCbVauXsdV+rCWQd6fib6Psp/HZabvox7lzPMXuY+iIYl5Ln/2H/sFEVe7jlsOMykAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500806S08GM3D</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080RSEQPOW2">
+    <div class="slide-header">
+      <span class="case-no">Case 092</span>
+      <span class="counter">92 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+0lEQVR4nOVWu21EMQyjbANX+m2QUfw2y2q+UTLAAXavBway75oESBcWiYv3UUNRIiUb8fVc6VsI+CsxcMQzs6Nu6s1FuTQyEPlxZjLSSALcAsDQoq1vo8wjP3S4+9z8tzDST7GGeQpxS3QWKPMgeqnElPG9mxnQyjwvMztUPnodr6+PJMEdzWvPI4y8oV3F18PC3dfccNHcAEfLDL5AyySqrs4cwTp+ouAqvqvOe0Tn0VTzGU8RL8q+00jSfcTV5Sz0EcnlozCUUs/YSl5FVuk5Pd/TtqR9ntJ9VHmZFdxvor2fVnk7cC+1+3yPJZyEeh4thrNOz/bP7rGf7v+1g6Tnw7gAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080RSEQPOW2</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080RGUFRMXN">
+    <div class="slide-header">
+      <span class="case-no">Case 093</span>
+      <span class="counter">93 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABBElEQVR4nOWWMW4EIQxFvzFSSiLlAHuRSMzNVrkZcyPTM/rRn51IUVKvi4QCA83D9sfGiJ/jKL+OgL9yBoZmj+58uN5X0l06RdzX3JzUNUoOF2Yb2rBXYFpNjv28ezyb8X3Uy7aP97eouVzK9LqARsy0OO9mhrlhboeZslwSuFU+Kr84bpFYN8DoaANtUE94rKT3CwbEEldFwyOLSy6FujPgHNqWFG4ITUVYa0/iFqDXs0w5x3HjkaRnnM6qLDupOKflNzR7YDVKVC0tv+pHfqn6RJckLqDm6xJYmp7LZaetRrN7lq7K16KrMmN/Ser7uPJLPvKbWTdw/q/0lPL0bP/sH/sJ/8arJ0UdBYoAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080RGUFRMXN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080DQ7STLC3">
+    <div class="slide-header">
+      <span class="case-no">Case 094</span>
+      <span class="counter">94 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOVWu23FMAw8Sg9IKW3wRqFWy2byKBkggFwGkHDB2U6KF+B1YZEIhkizOR6/MuLxrPTDBPwVGzh05+GZJ3WfQb44SZS+rGVSbqQYXJg1YJulY7dbUJxvl9xbfm+/hJGe2TwA44EvJbYMoBB7GN/NzE6+y8xqFG4hyQmsCmnsUf3rHEdySz9/Z1RdrQo1EeSA3cP4IuvzWfqM4wuS55iahROOwjDcecxn3aSUFISrM5DZNaiD9gK+9pEU5ZdRcR7aR1nRVjfF1dVwwLO6WPmNqqt0yfJq1T+qFhNi3yD5SHTUnEwXFtRHL28tii++6zm2j+yfvWM/AeAunpJXZZbWAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080DQ7STLC3</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500804Z6QZCTN">
+    <div class="slide-header">
+      <span class="case-no">Case 095</span>
+      <span class="counter">95 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWS05FIRQrn/kxcQFvKbytuTPeUtwBzLmpKSQO1IED7UDJDTk5ISmF0t5EfBxX/tQC/koPHJrLQBltN9oy7aWRBNp164XUNrIHFyndgUcZwEzVfPbRL6H/KsZXvXlf31r3U70qaQE1uqogplnPzavnKo4a4kufb4CjnZstQ7WLL8i+EVHYSRbShUvxDer9RnfilmNTQZ15uHA3IoIr+hH28vhGiCxf5ZCFvJ7ceXTELOLZmUdIt5edhja+oqlrhVPP+b2q0TF3JGUjX573S58/Y+cRsCbW80NBnK15tKDPpef0z/5j3wA9YJEpcVVf/QAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500804Z6QZCTN</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080HLR1OPXZ">
+    <div class="slide-header">
+      <span class="case-no">Case 096</span>
+      <span class="counter">96 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOWWMW5EIQxEB4y0JXuDHIV/s1yNvZHpQROZECnK1jvFhgLr0zzGHuyfiL9r5acj4F3OQI/dHMZv6W2K7tK4iese6LhG1nCR0oXa57gwUhHluZw4LuPPRxZw84mV6/5qxu9Vwlo7RI0rMcR+buZN6OcSGqO+WB8u7BugN9SO2o009inSi53nRnayA5HtqeGyz9DL3bI6SRnXHJHerd2k3BZ6yVmJKuPu5afElNXXYzfHgcr0eswj2/QZ7pLpbfF8tpOFfs4njqvgsdJnTIcsnIPASg143KZsLuz6Mlolalh7iucR4yGr/Jz+2X/sF+u2sMzW9vhGAAAAAElFTkSuQmCC" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080HLR1OPXZ</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080W9GJ9QXE">
+    <div class="slide-header">
+      <span class="case-no">Case 097</span>
+      <span class="counter">97 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWMY7DMAyjEgM3Oj9Sflb0Z86P7F0BC7nN4XA3H4dWgyB4oUVRtI34Hefy5wh4lzOwZ147Vj5b9xDdxUmiJuhK5jUWDS7MdgwLAMOKmPvayr9j/IzyXZ3mYlwCZeyZKzFkPB9mBngZ+2lmm2qPXtHYU9gkRXs09gLYlsM9tyQcqn5RW7aZ7uHsGt9I3ICnb0zrQNXwnD5JtqhtGlfT4ZKRzbbMk+pQ6rkjrjpEejYzK/AvttxfU+l5ru0693e+RyqeuwOJmCPW6Xm5iuMJqnx/M8atwNO4RPNdpqQb6j2y5UPVL67/lQc8dP8r+7B/7ANhj6FuGdGzVQAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080W9GJ9QXE</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="202605150080MVGDUCPV">
+    <div class="slide-header">
+      <span class="case-no">Case 098</span>
+      <span class="counter">98 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAUlEQVR4nOVWwW0DMQyjYgN56jbIKL4NMlKRkbqBM0o2sJ8BbKigD2iL9F0+Wj2IO31oShZlC7zGPP1IAX8lh2jE1EpqZSXKEPGWiEhREzGiaXiZM9vRd/51y+Laex0HtbrnxbZf5/gWmS0Gcr8SPdBleu9mxhP0fZpR9UnAa5++kYfWN/qeAdvw3DA3qoZmfqMOlOD81tSKan4RUeEVHsDyKw+VX2Ec6LHOIOMtKSqA4cSkq/OKRsn059DVeclcm4ifsr3AfUR/9tt5CYfKJ23d5PS4Pg3wNlW8R8zLO7yp91F/O7dC4zKNXzG3xvaGbgN3VX/x9b6iYcrus/2zd+wHY5yNd5tkaAoAAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">202605150080MVGDUCPV</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500804K74ELIA">
+    <div class="slide-header">
+      <span class="case-no">Case 099</span>
+      <span class="counter">99 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABBElEQVR4nOVWMW7DMAw8SgYyqj/wU+ifBfkZ85T+gBoDSLiCcqe2Q4eEQ8vBNggDJ5J3RwnxNWb5lgL+Sg70eFZHdV0JHUlnUZKAzt0qGccoObgQOdBu6Ae6bMm971c0ezHGT7l2G7/671m5LagVL90G0IieVu9dRNZwjykib1k6OsOj2DNGkn41GNWMrpU2kvQLutJ1NCMN0OpZuFEjKllplZbXZ55wVj08s2biepAqJtsYHyWTz3ryKmZdEnALuoiELYeD9OvcDan7CAN47HZ5P7L2r4Z8loiYyWdfuLH3cVJrZO2Fz2icuF9G3h4Mp2o2+rHUlHy/im4vw8zps/yze+wHEmivGlYWte0AAAAASUVORK5CYII=" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500804K74ELIA</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide ok" data-prn="2026051500808D7LTZV4">
+    <div class="slide-header">
+      <span class="case-no">Case 100</span>
+      <span class="counter">100 / 100</span>
+    </div>
+    
+            <div class="qr-wrap">
+              <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABCUlEQVR4nOWWPWoEMQyFn0aGLTU3yFHsq+Vm9lH2AAG7DHh4QZ5li80WWyQqEhceEANPP59kCfF4ju2bCfgrNrD7rT2TZ+h5BvmST8VDipLuxhagmwAIMuxdiTR2/YjN/SiHlF/WeGYzJqsv/PeTeeb6aHd1jLB4m4hglJVqkT2qj87j3eRgkwzqo1Fkb/LmrZTQnK4tQBfsmT1Pq8oKZO0xc2PNK6swT7WyRuUZHizyNGp3HzROF+tkVzTCoriyG8+fe7v0xmsYV3770MAJWFx9STrGi64ontP9PVpRt4l6RMWL1bZO1AJ7hu4gzUc02iXo3cetvvTizsX2jOWZ3besqDzLP9tjvwBFiKrtH0seuAAAAABJRU5ErkJggg==" alt="QR" />
+              <div class="used-stamp">使用済み</div>
+            </div>
+            <div class="prn">2026051500808D7LTZV4</div>
+            <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+</div>
+<div class="dots" id="dots"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  // ── Firebase 初期化 ──
+  firebase.initializeApp({
+    apiKey: "AIzaSyCu2F1TC0L43IB1K-YEcRR5PQURd4204cg",
+    authDomain: "testcase-eaa9c.firebaseapp.com",
+    databaseURL: "https://testcase-eaa9c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "testcase-eaa9c",
+    storageBucket: "testcase-eaa9c.firebasestorage.app",
+    messagingSenderId: "106706526418",
+    appId: "1:106706526418:web:664b9c0689383709ca8d0b"
+  });
+  var db = firebase.database();
+
+  // ── スライダー & ドット ──
+  var slider = document.getElementById('slider');
+  var dotsContainer = document.getElementById('dots');
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+
+  if (total <= 20) {
+    slides.forEach(function(_, i) {
+      var d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      dotsContainer.appendChild(d);
+    });
+  }
+  var dots = document.querySelectorAll('.dot');
+  slider.addEventListener('scroll', function() {
+    var idx = Math.round(slider.scrollLeft / window.innerWidth);
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+  }, { passive: true });
+
+  // ── 各スライドに Firebase リスナーを設定 ──
+  var loadedCount = 0;
+  var validSlides = Array.from(slides).filter(function(s) { return s.dataset.prn; });
+
+  validSlides.forEach(function(slide) {
+    var prn = slide.dataset.prn;
+    var ref = db.ref('qrcodes/' + prn + '/used');
+    ref.on('value', function(snap) {
+      if (snap.val() === true) {
+        applyUsed(slide);
+      }
+      // 初回ロード完了カウント
+      loadedCount++;
+      if (loadedCount === validSlides.length) {
+        scrollToFirstUnused();
+      }
+    });
+  });
+
+  function applyUsed(slide) {
+    slide.classList.add('used');
+    var btn = slide.querySelector('.use-btn');
+    if (btn) btn.textContent = '使用済み';
+  }
+
+  // 最初の未使用スライドへスクロール
+  function scrollToFirstUnused() {
+    var idx = validSlides.findIndex(function(s) { return !s.classList.contains('used'); });
+    if (idx < 0) return; // 全部使用済み
+    slider.scrollTo({ left: idx * window.innerWidth, behavior: 'instant' });
+  }
+
+  // ── 使用ボタンクリック → Firebase に書き込み ──
+  function markUsed(btn) {
+    var slide = btn.closest('.slide');
+    var prn = slide.dataset.prn;
+    db.ref('qrcodes/' + prn + '/used').set(true);
+  }
+</script>
+</body>
+</html>
