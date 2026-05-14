@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テストデータ 一覧</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #f0f2f5; min-height: 100vh; padding: 24px 16px; }
+  h1 { text-align: center; font-size: 20px; color: #222; margin-bottom: 6px; }
+  .sub { text-align: center; font-size: 13px; color: #888; margin-bottom: 24px; }
+  .list { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  a.item {
+    display: flex; align-items: center; justify-content: space-between;
+    background: white; border-radius: 12px; padding: 16px 18px;
+    text-decoration: none; color: #222;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    border-left: 4px solid #2563eb;
+    transition: transform .15s, box-shadow .15s;
+  }
+  a.item:active { transform: scale(.98); }
+  .item-name { font-size: 16px; font-weight: bold; }
+  .item-arrow { font-size: 20px; color: #2563eb; }
+  .loading { text-align: center; color: #888; margin-top: 40px; }
+  .empty { text-align: center; color: #aaa; margin-top: 40px; font-size: 14px; }
+  .error { text-align: center; color: #e74c3c; margin-top: 40px; font-size: 14px; }
+</style>
+</head>
+<body>
+  <h1>テストデータ 一覧</h1>
+  <p class="sub" id="sub">読み込み中...</p>
+  <div class="list" id="list">
+    <p class="loading">データを取得しています...</p>
+  </div>
+
+<script>
+  // リポジトリ情報
+  var OWNER = 'shujianhui9012-cpu';
+  var REPO  = 'TestQR';
+  var API   = 'https://api.github.com/repos/' + OWNER + '/' + REPO + '/contents/';
+
+  fetch(API)
+    .then(function(r) { return r.json(); })
+    .then(function(files) {
+      var htmlFiles = files
+        .filter(function(f) {
+          return f.type === 'file' && f.name.endsWith('.html') && f.name !== 'index.html';
+        })
+        .sort(function(a, b) { return b.name.localeCompare(a.name); }); // 新しい順
+
+      var list = document.getElementById('list');
+      var sub  = document.getElementById('sub');
+
+      if (htmlFiles.length === 0) {
+        list.innerHTML = '<p class="empty">HTMLファイルがありません</p>';
+        sub.textContent = '';
+        return;
+      }
+
+      sub.textContent = '計 ' + htmlFiles.length + ' 件（新しい順）';
+      list.innerHTML = htmlFiles.map(function(f) {
+        var label = f.name.replace('.html', '');
+        return '<a class="item" href="' + f.name + '">' +
+               '<span class="item-name">' + label + '</span>' +
+               '<span class="item-arrow">›</span>' +
+               '</a>';
+      }).join('');
+    })
+    .catch(function(e) {
+      document.getElementById('list').innerHTML = '<p class="error">取得に失敗しました<br>' + e.message + '</p>';
+      document.getElementById('sub').textContent = '';
+    });
+</script>
+</body>
+</html>
