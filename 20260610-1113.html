@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>测试数据v2_20260610-1113</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #111; overflow: hidden;
+          height: 100dvh; width: 100vw; }
+
+  /* ── スライダー ── */
+  .slider { display: flex; height: 100dvh; width: 100vw;
+             overflow-x: scroll; scroll-snap-type: x mandatory;
+             -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .slider::-webkit-scrollbar { display: none; }
+
+  /* ── 各スライド ── */
+  .slide { flex: 0 0 100vw; height: 100dvh; scroll-snap-align: start;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 16px; position: relative; background: #fff; }
+  .slide.used { background: #e8e8e8; }
+
+  /* ── QR画像 ── */
+  .qr-wrap { position: relative; width: min(80vw, 80vh); height: min(80vw, 80vh); }
+  .qr-wrap img { width: 100%; height: 100%; display: block;
+                  border-radius: 8px; border: 1px solid #eee; transition: filter .3s; }
+  .slide.used .qr-wrap img { filter: grayscale(100%); opacity: .4; }
+
+  /* 使用済みスタンプ */
+  .used-stamp { position: absolute; inset: 0; display: none; align-items: center;
+                 justify-content: center; font-size: clamp(28px, 10vw, 48px);
+                 font-weight: bold; color: #e74c3c;
+                 border: 4px solid #e74c3c; border-radius: 8px;
+                 background: rgba(255,255,255,.5); letter-spacing: 3px; }
+  .slide.used .used-stamp { display: flex; }
+
+  /* ── pre_registration_number ── */
+  .prn { font-size: clamp(10px, 2.5vw, 13px); color: #666;
+          word-break: break-all; text-align: center; margin-top: 10px;
+          max-width: min(80vw, 80vh); }
+
+  /* ── 日付・時刻情報 ── */
+  .info-line { font-size: clamp(13px, 3vw, 16px); color: #333; font-weight: bold;
+               text-align: center; margin-top: 6px; letter-spacing: 0.03em; }
+
+  /* ── 使用ボタン ── */
+  .use-btn { margin-top: 16px; padding: 14px 40px;
+              background: #2563eb; color: white; border: none;
+              border-radius: 32px; font-size: 18px; font-weight: bold;
+              cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,.4);
+              transition: background .15s, transform .1s; -webkit-tap-highlight-color: transparent; }
+  .use-btn:active { transform: scale(.96); }
+  .slide.used .use-btn { background: #aaa; box-shadow: none; pointer-events: none; }
+
+  /* ── ページドット ── */
+  .dots { position: fixed; bottom: 12px; left: 0; right: 0;
+           display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; transition: background .2s; }
+  .dot.active { background: #2563eb; }
+
+  /* ── 未使用カウンター ── */
+  .unused-counter { position: fixed; top: 14px; right: 16px; z-index: 100;
+                     color: #e74c3c; font-size: 20px; font-weight: bold;
+                     pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,.15); }
+</style>
+</head>
+<body>
+<div class="slider" id="slider">
+  
+  <div class="slide" data-prn="20266101120202AA1270" data-datetime="2026-06-10 10:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOWWQW4EIQwEuxfu8KPhZ6s8KT+Y/RG+Y3XkmclqlZzjw8YHhLg0Nu0yFH6G334dAe9yBs1Yy9yKztS3lXSXTRLaB2wUKa5xy9EFOWDDO2CsybVvu7T/scZr1OeO2JJ1BVS7l4XaBEur84NkbG04yZ7VR1fsmmFsSUl9ZKMC7PG43lFtpPnZOZbRO8rESuOVLkKXA1xoaXXmalotmndl83mLNIGivcwcPn/7+VA/Lb1y55EuTmble+RYpFNaSXWuTzJ7B9sn2/TUufAISs9gNTLnoN2ddA5nDq9e3ze3j2asYaoTkkl+5j/7x34B5OSXftZ+F3AAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120202AA1270</div>
+    <div class="info-line">2026-06-10  10:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120203AA1270" data-datetime="2026-06-10 10:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOVWQW7EIAwcB6QcyY/Mz1b9WfKUPqASHCM5mpUh6qHtta7U9QGQL2PwzBghvsa1fEsB/yUHNl8T99R0JNSCalGS6I9zQyK9jCUANwMQKHCsRO5b+ojDnXGK/kHPy76ORkfhZqeWb2odKEQPu+8hIug1A5eIbFE6mtGc1TMsSL9KMjXYUDFKDO7IdTEge3MfKUi/IHcr06zUClOL8avxzs3d0gsALOidQe/pbc7TpS2Uz7DirE5xfAY+mVwYhbvc82gUsL7LL2H8mBOpfuz13BS9Bs8jzFFY9th/jsqGS+opMfddbinhcBHxLc6vmq/DnxVxfJYX+8c+AXZln0ElZt4QAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120203AA1270</div>
+    <div class="info-line">2026-06-10  10:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120204AA1270" data-datetime="2026-06-10 10:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA60lEQVR4nOVWO64DMQgcbPfsDXIU9mq5mfdAT/KWK7EiwkqkKJFelykSCn9oBsaDQQKvdpY3F/AtPsTItQ7UYdNhTorFIgKw49JrRIZROLgQWYEtb7s0Es/tvmu0v/VDGOUf3y7H8mmM13wDaNrzpoGdrGfj6hlxt/44BAl3mD+difn2OiwGXCPZJuYb+bgzWc2vw1l11ACHnZerw7KaCut9dRYRUCfnztTzmCTzdFWwi0h+yw4kydppPEdE9sHH6tR+ZIfIufBnga0hq5iNq92xyWKHrNR+BNSc8DZoP7nz1TSDcnQlPzbH3gBTbI9wHkEawQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120204AA1270</div>
+    <div class="info-line">2026-06-10  10:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120205AA1270" data-datetime="2026-06-10 10:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6klEQVR4nN1VQQoCMQyctHvv/ij79O6PukchMpJWEVQUUbNgKDkMpdNppokQt3FMdxDwLxjYPOemmUO6WtBdlM64Ylsy6ddIMbwQWbysM7DJFPz2hfZzjkfY1pW+3vdNjKwo9ao6fXjem35uGuhn2alvgE27ozzTJcfo7e9cqvni6B4WpZcNmU6KUuN46Wa2wpF9pRheGjSzGpBZc4uq74imVpw0bi5sIiITVgCH2T2GMF/x7OTcDWYRvJP3DiiwmgDzTzjSU2y69EyEzsHqwmc9yBJaX47oXzjF8GLMo9GlfRSmP55HaSfsBLTPk+T19n55AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120205AA1270</div>
+    <div class="info-line">2026-06-10  10:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120206AA1270" data-datetime="2026-06-10 11:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7ElEQVR4nOVWMW7EMAyjIgMdnQcVUH7WryVPuQccoOw6qGB6Xdq5LNB6kBMtNC1SsjW+rsfyLQX8lRw6Gb33QlyJKBFudLd312Ts1OAyZ7YBB/9OG/K799v24xi/nxssMTDOzWsfs3HKznKYGRA4t4eZrSoffS6Awu5umY9q7p40ck0lLgrRCScuu0eJ7nnnNhm9G1PFl52KND3DyVrXJz2B2Z6BSXWVUs/5FJhSV7gqew0FfpRyHiUK9JFOzxlAkC8LzRKXEjdpKCHf5blzIry93IzaXoTzCMfrCqwx7tr3VcaHkVV6tn/2jn0H5rqw0XKkCxkAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120206AA1270</div>
+    <div class="info-line">2026-06-10  11:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120207AA1270" data-datetime="2026-06-10 11:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABCElEQVR4nOWWQY7DIAxFvwGpS3KDHAWOTo+SG5jlSKBfOXRG1WQ79aJjoUjxxv72M1iI3zbDxQV8ig9U+0Zy5CW9DKdcCkl0iUeNpKURfOJCpCK3BKBLcq/93N4f4+rrdTX61fdq4Y99ydACUm5z15SJ7suzlqjFkWfwaW2cYJN0mqNeU68J5eS5Gl3BIS7IZmJzi4qRTfXwqjMyz+Zai6NfnSUeMoB13hPjagHZ9CZDGrK3KdWrv6epDZRJzj51/nmP2upyVC+u1MbWcFpinXhO9h6hoG/U7TZwo+++Yfcz53b/crs39Hty7djv8NJLg6rNDXOnOOkNwF1E0MUSOGp02nPkn+2xD8qYn9DGK89tAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120207AA1270</div>
+    <div class="info-line">2026-06-10  11:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120208AA1270" data-datetime="2026-06-10 11:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWQW7EMAgcYt+dH+xT8NOdp/QHcIzkiApvWlWtetw5tBwch8vAMAYk8N2u7YcL+Cs+hOVZIm05dJJi0UR0gfdENx4HIh0tZAdcKpv7A228GuOL1fvrPbyTcQOoLaRZbQHn6tm0mBL1jPiwuYSdl42Au8F79V6fjHu/dhbP2S50tiiG2cak8Wwolv0KyBIXGs/Qa9dzPyYwX4bxS76K5DlPtp4tA8iUG4fnz3k0lrSyxJM5j4Dqcj7GSXtHpreSLQNg6Rk3bgy0ke+XV19d+T5bdP5O1vyNTDbOHddjTf+Ng3uISO45QLz1Qtpz5J/tse8gBaXkyHgiYwAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120208AA1270</div>
+    <div class="info-line">2026-06-10  11:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120209AA1270" data-datetime="2026-06-10 11:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOVWMY7DMAyjYu8OcA+4pzg/6JfdH8njATZ4UJ12aHcWaDU4iBaaFkXJiOeY20sK+JQc6HEmR/J6S9QhukslidICnYxrbBpcmB0ABoBuWfTO+fz2I42W31Hz0YO1CjeHtB60C9FlfK9mBtQMTDPbVX20IrophE1S0kegV56de/4OFd9RSDaUlqKRVXzZxnIMcmj5Jg/TCFApX6abqO6nzJ8R9XXM35Ycc1fPo6jsktmmnEcMpqjoh8wnLeB2+p78YsWl+0ZhRs2lKfmu+PvxaTUN3X4VZoVrXkNfxBd3PZ9iVu1X9mV77D/uuJcZn4r7FgAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120209AA1270</div>
+    <div class="info-line">2026-06-10  11:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120210AA1270" data-datetime="2026-06-10 12:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWMW7DMAw8StoloA/IU+Sv9WfyU/qAANJOgQVlt0PSIUNyQ8PBNggDR56OR4nhNma4SwH/JQfr/ozWgLoSVUm1VDMnWx3dvIzAwYXIBtTYgSGJzv0sr8f4Kxf7Y/89J5dcWkAaJWpL2TBo/e4i4mIe2xSRwpqjM5ouYZsZZY5gvWpusfv5aqbhhuOMNR9+uU/ZaDyrO1U9fAOZxfPCsu6EL7ZZPjlEh/gEAfNi7h6BgJuQzQd4lHiFfuxG2oP42Ucrun8oa47M7DTJ7BpTFi5QozUvoFeenvvCXV0T+w3nO3+mscUvccIDcR9h7d9S05V7v/r1DZKe5c3usd+0TZ3+ttIKowAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120210AA1270</div>
+    <div class="info-line">2026-06-10  12:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120211AA1270" data-datetime="2026-06-10 12:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABB0lEQVR4nOVWwU0EMQwcJ5F4OhIFbClJB5REa9lS6CB+npRokLWAECee5wf44c3m44w9Y1uIn7bT3RXwV+7A6T5zLL2gtxX0lkYS1ov1TPozUkxciHToyBwwKdG5b7s+PMY3Kx9fq7QeHJdAUe5jFiUsls+z5dkC+Qx+2kVskkE6MldQwel/1p1dKSAuSFeQ+4mlY4XlecLF68X1EuegPBegDXu5PU8Blj0kRvqFV/D+TIfsLTqWzxNeX2BpTJ6/5hGhDjnPMF65bH0oAFBG8bn4PEKDdVol8MTYfUPHPobU8xbWN+alXD9cfkXhJQd0SMU+KEF4E3CKCOx1AXzrOWjPkX+2x74DCcyiegv/UNkAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120211AA1270</div>
+    <div class="info-line">2026-06-10  12:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120213AA1270" data-datetime="2026-06-10 12:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABBUlEQVR4nOWWMW4FIQxEB0PvlXKAHAWulpuRo+QG0BtNZNivSEnauPih8O66Gex9Y0jE97XkRwp4lhw4PGbS9JReLWgvlSRmw2yZ9G1IjC5SatC3AmAmjxKgWx4vNdvjQwJ05X7O5K2O0y2OFlCU62UUJWYsz6PmUQN5Bu/VbYNNMshHs5XZbqJmW1dcnznqjjD1qi1It5p2aHcrjeqDSwJ0C7QvgPMCYPNPNOSXHMjuSGvnqPARHcuz+wgGmMb0+es8gvK42KK4Ipm3f6GM5BmH5A1zFM+4db3P3f0b93/rrveM6G1nCdCVYyUo14X1yhQ0JwV4T8kPXwP40XLQPSf9s3vsJ5d3q5Qag9y0AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120213AA1270</div>
+    <div class="info-line">2026-06-10  12:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120214AA1270" data-datetime="2026-06-10 12:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOWWQW7EMAhFv+1IXZIb9Cj4ZqPczL2RvYxExAjSSlW77l9MWUDEBvN5OC6On3bVXyngVXLwGb5NBTQTaqSzqHuI3Xw09zhG5dRFKR1ynKVjlY2s/Xq0+dc1vtv2GeUoMjduXc8QMxbHYvOcSNN4ht82YQm2u5PqToWMUFi8+TDe/iI6nR8GnLu+kfYXIWxEbR79snSuWAUyTAZWP/fku9J41rwhNWfN4uqLZ49VCm/U/cXNttH6nbG2LfyAjMbrV3O+w8RDZxrPt63e8sq6dvIbRLfVr/cjBl2J8/X4Hd0fRuZZEioSz+WfvWOfjTqqy186wy0AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120214AA1270</div>
+    <div class="info-line">2026-06-10  12:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120301AA1270" data-datetime="2026-06-10 13:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABCklEQVR4nOVWQWrEMAwc2YY9Oj/oU+wf7JP6Necp+4CCdSwoTJFDKbRb6KGrQ+tDiEVg4tHMyEJ8Xkf6UgL+Sg2c/swkZ1uFZkH/0khCpdSx0OM4EOmoq88qJZr73bQ/GuNOTZ/Lj777RV01kpnDKk91WaSeZ8uhegbfly1h+0sKwE3QXrQX7L7TfmxR/eVYFh55wuqwOJ6HVQcFvMU5iOfiorptBAUwfQhG+k7P1R2UZzNPrVg9u49ggNUYnj/mkefGcrGF5hVxHjaI5+LzCA16zS/Xi+HCmPuGn9cdtPLZ/RvX37ace0a0by1qDpIDla8bjidKUE4mYBcRT2mAt+7BlQJw5Z/dY98AfLawoLE5g/sAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120301AA1270</div>
+    <div class="info-line">2026-06-10  13:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120302AA1270" data-datetime="2026-06-10 13:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWS2rEMAx9jgxZOjeYoyg36JFKbuYepQcIyMuAwyuKh1l0oLtqMWOMbbR5evo8ORG/1zk9mYBXsYHmpxjIQV17kC96IWoGhHQ3phhcpLSibMcCtJSD4pzvd1uB9Z8wpj9spfqOw81eWtflVVWIFlzPKqaB9Zydo+cXR1bG6QZoOpLbC4W1B/EFWcXQC1Ho0BaH+9ArYSUZhGu+70xLlSDcjMK867wnAeb941wsqI/Gctbq0Q7Lr/k5mtdBS0ycH/PIh9F52+bvNUqvFFCh99Go6h45F1oS+wL0XIL/IIr2edw2CZr7oHl+5VKP6xGnG0OvUOolHTG46c3+sT+n6KHFqu2eHAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120302AA1270</div>
+    <div class="info-line">2026-06-10  13:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120303AA1270" data-datetime="2026-06-10 13:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWQWoEIRCsViFHhTxgnqI/W/Kk/MA8ZR8QsI8DLRV0ExY2uaYPSTM4TV9Kq6pthXiMGb6VgL9SA8daI3scdReqOe2lkoRezoJIrm0EH1yINOSXlDtUkjv35oBxj/T51xbfmzMugZQ5n0fKhPr6eVRfP4NfYdvYKwkOuAHakrZ0Y1zbLF48k8jdUOOA7cTc9M09bp6Xyk48JywPF2pZLay/ghF+qIGj7htjHdYyvf08tr6AZR+e7/MImbcuNs95BEDlPPrp1kejbnFXEkk/P98icx5DyutZhuscVHm6trg/eOFymarPgnlQnPQNwJuIQC8G8Nqi0ztH/tk79gMfr5xiV2tTkwAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120303AA1270</div>
+    <div class="info-line">2026-06-10  13:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120304AA1270" data-datetime="2026-06-10 13:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOWWzUoFMQyFT9qCy8wb5b6Z+GbtG6XLCx2OpLMRFXThjaBZlOEw8KX5rRDv7SwfJOCvaKDHWd0A24KtJF+MJDDoqGS4UXK4ELkB1rRjSkuOvb7cg/5QxmfafG7f+u+ntBalBTTtZwOUmGn3HSKCeXtynCJy5HDll+YG6LbefGf1L0hWB9mhrG6VTOOuTYzLas/jepwRau1Lw4eVF2e7hjPZq+flN8xtaUDz9sIUEWkYDbgfEW1k9RF3qOsu7Ky6ajE7IrkDAhwPYZQvNLtqG6l7sC8MOSy2YUnMLy/bLVxyuNjvqz06YEjiyj97x74CuJmOXrwRl08AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120304AA1270</div>
+    <div class="info-line">2026-06-10  13:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120305AA1270" data-datetime="2026-06-10 14:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWsW3EMAw8vgR8KW+QUagNsrI8yg8QQCoDSLiAdow8kjpXJCxkic2RZ5JHI77buv1wAX/FB/Y4U3fyTN2nKBYPxNJsQyIjjJsGF2YVwAQwLIu5HzX/Osaz5euyc0TWSlzGx+NViCHjeTezM4JlZpsKt5DkBNaGuLGp+tfZ/fk5dXPD2TFLS9HIVOH6Ma+C5KnLN8dROsCVQcJK1+nCqBn7vWNZTY8qqqvTuqO0FJyreB5b/N83pMfre44ZsmR9REYlw2cUtkwHDz0aljruHfaimRuXr7TQwdIwNHX1pX7RQeZp6varmMnwT9EX5Ytrv4p941ixNHVl/2yP/QAnzopZMFjUjAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120305AA1270</div>
+    <div class="info-line">2026-06-10  14:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120306AA1270" data-datetime="2026-06-10 14:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWwW3EMAyj7QB9+oAbyNmgI91M3cAZpRvYzwAOeGCctsD1z0cbBBGiD02JEh2I1+eIv1LAX8mBTd/UkFo5E2WYzlJIAgJNpI4RPbgIYUWuxw3oYTHVeblif0/j6ycacOMVJ18f7iJpKWwaqEx0s56LV8+LOKq/2JdC394AW0GuyHVkJtZh4gtOrBNX0M2Gy/TzVpKufbUdYR1q8brfTn1HF99WtC2npLONL0auc5qAjZ+r2Y/GqW2pK3pwyyy1FJWrT89NzdXkClTtHk5f6I83FbzIHaLRB7Gl/tjvH8nk+7j6y/q9Q4bXjzBFZdJz+Gf32Cce+aG2BpTUZwAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120306AA1270</div>
+    <div class="info-line">2026-06-10  14:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120308AA1270" data-datetime="2026-06-10 14:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABDUlEQVR4nOVWsW0DMQw8vh5IyQcyQEahNshIQUbyBsoo3kAqDfBxBvVJk7hwEbNIWAgQIeBE8nikEN9tX364gL/iA3uchc31CN086S9GEuNtojO+seTgQqRC38u5YsianXuDtkdj3PCNuo56x7tf5JWRLGxQzvrm8OqLz91Kt+nIwv205pPYJJP6aERlV1gwedR9y6ovg8YRbIdrRO1puNqCV4gSl6Q8gx2lR5VDuDJx2VxnyN2mROfyeUbtgGteno+JELoxu9hT9YrBamUWn9eYRzCMjeO1dDwxZ98I3DBtoqf9+XTZetpcQHTuIdFx9aw5yCkdlw37CyVJJxfgQ0RCpQGea0nac+Sf7bFXjvetLrzwI08AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120308AA1270</div>
+    <div class="info-line">2026-06-10  14:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120309AA1270" data-datetime="2026-06-10 14:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWMWoEMQwcWYaU2h/cU7Q/y9d2n7IPOLDLgJcJ8t41SYorgorEhW2EYSQxo7EQX9dZvoWAvxIDW+xKDvgM+EjKxUkCu7ZAjzRKAm4FILNSsVb7ovfk3nsCxo8xPdaX3v1enwnUvhBbNaKn1buLCOC1r6eILFk6eq6L2CRTdAQ2H7ZpCyEPy8RFyHYqd9g2kuYGrg5fOlISllUvGWUa2TxGVsuak13Q398OAfBx45nE5wpjCLij3gHsTPJBPP1ou0xBE3VEUif6sHDDkYULuE7ouCfxuTzOLjDKbRt9TfUjC0Q9JBpeEv0IHkJaPFhdEvnc/DE3kvgs/+wf+wkRiqDmlZOS1gAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120309AA1270</div>
+    <div class="info-line">2026-06-10  14:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120310AA1270" data-datetime="2026-06-10 15:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAklEQVR4nOVWQW4DIRDzLEg5sj/oU+AHfVN+tnlKHhAJjpFAribsRmoq9RYfWoRY7VyMhxl7jHhdY/kRAv5KDKx+hppZ8yOQu+gumSTS2VYE0q+xaHBhVoCMtKFZFOU57t+2spU3YSy/xqIAA9/Q+ARNRJPxvZiZvy8wzGxV8U0P5Wi4x0ydboBH5/bjt2twuc3d0xa8kSnDBVwxAtmlfOmpnqA6vsvsJVsvp4phJVyLyBfmqq6TwQtMk+eItvr73hCun/foGjJkfcRZVE5WVVfL7ketnKp7sX1sUl9I5w5Et0JNXT1dKFuqw3LouvlqSsdu+iK+OOYr7Loh6iP7Z3PsF2JCjppViuAIAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120310AA1270</div>
+    <div class="info-line">2026-06-10  15:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120311AA1270" data-datetime="2026-06-10 15:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA80lEQVR4nOWWwW7EIAxEx4DUI/kj59PZPzLHSkRT2az2sFV7iw+tFZHIl8dAPLYQ73GVbyngr+RA87UaVt/SdSXtRUkntnlW0rdRcrgQOQGsPjClJZ1ze747BedNjPJLbsq6nfGul0Bzva4aM03vQ0Qwz2q4ROTI4crLN9rK9A3QNIC6v7PqFzQsLyKis5pWMonLsYkuto9ELskRen31p6RwLZwqzJkc1bLud4fp6g7N6wtTRMKWgc8D6COrDyrJaiHckPVflVc/ukSu4zbGjzlt0I+YAZB1zkDYRdBXnl+p3y/dMXYhr9z5KkKRxJV/Nsd+AU+TlO2oAIg6AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120311AA1270</div>
+    <div class="info-line">2026-06-10  15:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120312AA1270" data-datetime="2026-06-10 15:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOWWMW4EIQxFv4Hec4McBW4W5WbMUXIDKFcy+pGZTRQl2nJdJC48jJtvzLNBiJ+20q8Q8Fdi4HCf2TnqDlQLyqWSxGzrQCY9jRSjC5EGZQEwpUTX/oT2Z2t8s3L/zlfOFqxLoOib6ChKzFieR82hPIOfdoFNMqiPZiuzFcD8lL2bEFTnCsC0c7i3uDp3P1zSUO+LFKBbHCT0Jf5j8yka6RFXYy9GNWU0zwN5OFqmMXX+uo9oyquLLYpnkpl7OKvTZXF9VPOu804gam5cpv32QjnOW+jcqHu/7p3qFKCbrtEB7evA8i2H3funiGA2A/jectA7R/7ZO/YDiImmgMM60j4AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120312AA1270</div>
+    <div class="info-line">2026-06-10  15:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120313AA1270" data-datetime="2026-06-10 15:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+0lEQVR4nOVWMW4EMQgc1vTsj9ifRfmZ90GRcHmSrYnYS1IkKVLkKBIK1kIrDYzNgBCfbW1fQsBfiYGRvoVPu5fusygXJy/EcTQy09hqcCFyAGcLYIgWc2/Uh2N8Fxuy9p/891sxzacFqFGuqjHK6j1FJB9VYInIXtVHb9bfDyzpIzB85jc9w6v6V2HParEUsNAXtFmjk8lzKpX1LNZ6K+XZU6asT8scZhVuY2/seb/sKdRbCe7dAtMStG4uDBERhQO47ck2qngm2QKNnelr7vdjHvmSpxSr6l3gvHSjHNeoOGX3mxyl8wipVMAJ66t0v8JljiLdkH+2x74C45iUSb+uIMoAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120313AA1270</div>
+    <div class="info-line">2026-06-10  15:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120314AA1270" data-datetime="2026-06-10 16:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOVWsW0EMQyjzga+tDfIKNZmP1M28I1yAwSwywAyGOj+kSL54otERaJChWCAlkiZFuJrrO1bCfgrNXB4TiRHOwvNgu7SSGKq1Bt6TL8ZgKCh9GzIs6a34NnvARgPavOKqU+c+0FdNZKJHYU3dVmknkdLoXoG79HtFDbJoD2amqdmNFf21FWj+CWt0HzUsOJdW9ichzNrcIpT4JxX3Ulmh/4ljAdB9k89W2G0nkdzfgHnegv1Iyu8d72Fvlfm7sAoPW/uR6KY1zR8lS7sYT7oUbqUserrex2xfiQ89HJoOjQMl6cZScV68Ywg3F1EMMUAHpqC/jnyz/6xHzlcp6z4garvAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120314AA1270</div>
+    <div class="info-line">2026-06-10  16:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120315AA1270" data-datetime="2026-06-10 16:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOWWwW1EIQxEx4a7t4MtBVpLZ6SUdADHSKCJDIkU5eeY9WFjoS/ky+DhYX8hfsbSSwp4lhzY/ZvIxFN6mUFnKSQx6pKaSD+GxuhCpMJeJoAhOdz71B+vcc2Nes19D/3jXHa0gGxc956NGLE895J6CeQZ/Iq5wfaNBugqRs2j5uP4qOsW5/MpNnVMazPM5+6KALZ0SWE+W5vGaW1LP0jjl2Avc/PsG2M0z72we71eu4bOIxjPK55RPtOHoJMMc7BnlC4OyRvmKJ7xqcsG8xV4v2XXe1r0xlsDdHUj3WB8v2HdKUF9UoFXETnzl2/Ve5cG6Mo/+4/9AOzOqJJ3V852AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120315AA1270</div>
+    <div class="info-line">2026-06-10  16:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120316AA1270" data-datetime="2026-06-10 16:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOVWMW4DMQyjbAMZfT+4p9hP9z2lP5DGAjYY6JKgRdKx0dBqEAwuhCRKtBDPsdILBPwVDFTPmSNrO4E2g3gbyazwTFJjeB0T6ahDNsCkxPfe+vs5XjDrWZ+x75F+GSs+YqBUyq6lEharZ23Rer7HmHBhkwzSs/VivTymvLaoPnul5/IqZvWqZ9TdyNpQCfgjB/W5AMcsoAmAaW/hSD9gcCFVojJr80ewnrX5fIFZY/r85Ue3kr3qFOhH5ISrK0rP6e5HJhdFVlw4Qn2hjrWPtR2fYXdD27m5t0X2PKPqpYtqrA1rp7t/iuE9RMSvNMCP04VTAK/8s3/sFc2kpKOf+yXGAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120316AA1270</div>
+    <div class="info-line">2026-06-10  16:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120317AA1270" data-datetime="2026-06-10 16:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABBUlEQVR4nOVWy4lDMQwc2YY96nXwSrE72Jq2M79SUkDAOgZktMghOewHckh02PXh4ScMI41HY5Hh65rpWwj4KzHY8G+2nkddgapBuVQzgzR1dPM0UgwuiBq4F+4QKtHcV5X2aowfYkKPnXtWrLi0gMJ97qOwQWL1PGqsnmG3pUvYvkkBuAnSirSCw/+kzS2M53ptYRtQ7hrHc1d2k1b4FedInnGsqqGvwvhFz2xXf16Fx+p5eAIKKMfwfH+PzKteXaxRejYzx0UFexdrlE8SKuQ9n7c88Gax8wZ/zL1ftuMS6xt53Wx2dYXNG24dXu+GuRsF1ZuAg4iwHn07tRw059A/m2M/AQBXoL+InoDAAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120317AA1270</div>
+    <div class="info-line">2026-06-10  16:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120318AA1270" data-datetime="2026-06-10 17:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABCUlEQVR4nOVWQWoDMQwc2b57oQ/Yp8g/6Jv6M+cpeUBBPga0qMgOPSQt5JDo0PqweIVhPNIMYzLcriPdlYC/UoOJf7NZtkWdNegubGYY7dgc3a+RYnBB1FA/7NwwqET3nml7OcYPtUFZHjn3rFpxaQGl9rZLqYYRq2fhLByoZ9h1dZ3CNrMgH41WRitg7/h0E6L45kVWoNU3GoTbtXZUA3zEOajPBeDy+a5v/qPjJRjpF75YG2GdrDVSz4IsUEBrTJ+/88hHvFyskXmEaaK9X8J8JDyV7H1eKayRuVD7sdtlO4XzZfPhTlWnANx0tVLttOHYzVM4xeCeiAijKWDn5imcAnDpn71jvwBj6J/97NLzugAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120318AA1270</div>
+    <div class="info-line">2026-06-10  17:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120319AA1270" data-datetime="2026-06-10 17:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOVWwWkEMQwcrxfy1MIVcKVoO0hJISWlA11BAe0zIKMgXwJH8r4J5PSwQJ/xjMcet8TPGsuvEfBfZkivtTu66xxokPaimSX2OFvPrG0sHFy0tkMSx46jrWTtj/0q+D0xbmv96mJNfOXiZrVLd0y1yX5Wrp+R13LENHZmknBdIVYKS/a0IPKFTL6SIdmdhmvVpBTuaUydu9fJFlOpJyto91dem3gceHp/HpuD6medxIt+cPMopublroWDq/Nw0dMgxvOzK6DfoCV7/EEe6di4eVTQLx+nt0qHhZhHYmMrd63B/l/Vo8Hzc3uwf+wnGCCtqeu3jHkAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120319AA1270</div>
+    <div class="info-line">2026-06-10  17:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120320AA1270" data-datetime="2026-06-10 17:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7UlEQVR4nOVWQWrDQBDTeBdy3Pxo/LPQhwXGP/IeA2NU1m5CaHPoodWhnYMNg0ErjTRrIz7XNn1pAX+lB67jWRhoB3VP0VmcJPqcfS7kOMakwYXZDHgF0K2qtV8OwX8V40Wvxfe++6leHdY6XgOd6DK+i5mhXyqwmdlZlaOjVh9m3itF+XWS5SnFqeILeO7DLTvrVPFFC7RIeO7QqZ5vJJBCnXlfzmTo+aJ9uDrV91GM+YpzxKF2WaHCne730VL7ZTs7+izbz48qidpik+L6rQLmN/OrSmcygOXEKHwbC3MS+nl1YERJ5Sv7Z/+x77W3qFYhMAXKAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120320AA1270</div>
+    <div class="info-line">2026-06-10  17:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120321AA1270" data-datetime="2026-06-10 17:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOVWQQ7CMAxzaCWO3Q94Svb07ik8AKk9IqUKSscuII74ANHUrrlYThs74niNcXpLAb+Sg7dYU4M3nQk1Eq66ezo+bxzcyIms8dtXdMnk2vcVpX4Z40Our0TcHFcc25YAFEen8d1EBIjHPERkYfEtUzk67lmdpxuIPpqda8fRWLqRGqxUKzW5ozgJ1/fqhnoYk6/XQJzN60y+TaPCe7Whicd3xhNdWb6Q0ZfwoxvSdbEcGjK4fmTRSsr2oy7necVyqVRfKDWkstRwhxPJF2bouLSRNRlvvnKvwGa76ZP44piv1J7axXlX8mdz7AN63pf1SYHCOwAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120321AA1270</div>
+    <div class="info-line">2026-06-10  17:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120322AA1270" data-datetime="2026-06-10 18:00">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOWWMW5DIRBEZ4GefwMfBW5m+Wb4KL4BlJFAEy3+SmErpadIKECaZrQ7jwUjXtcKbxLwVzSw+x7ZYi9bKFPkW0jGDmRGkl3j65pZRW5uPSzJe7+Oz3u8a+MaH/VFU+TLNqX54uS5FzXP52qAF05SxPOoadR0plydriDKF8BEiR0zt6nrc0MmUODWJYr6nLYdCBgwx0c8wi9cYfPsN2gXPpU8950vMLOmzz/vEaePaI94SucVneS89yDyxSaZ3Xuu4jmcZ252aeu4f0nnRnny7BdK+O7TR8dtHVgXmqjeANzNDOOaAD6q/zqCwNf+2T/2Gy0+raKadeLyAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120322AA1270</div>
+    <div class="info-line">2026-06-10  18:00  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120323AA1270" data-datetime="2026-06-10 18:15">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAUlEQVR4nOVWO24FMQgcDFJK9gY5Cnt071HeASLh8kleEbGfKErqR5FQWNjNGDzMmAI/Y2+/joC/cobwXDmC4yzdZtFdLE7EsXJEXqPV4IJoBbbnAgySoj7LV8Zxb1oBbrsTk7G+GuNbSFILkLGwdtHAKKt3IyLAMNadiJaqObpjHsTOpJXguk3t7BaOqYW4kYqRa+L2WaQbOEWDo5+qBS3rM7JGjXBjB3udTop2OSbq+R57EZ8Fmh2OSzS2KPJB3H7UI3p4PvGsmqM4yXy8chWf2+VH2t8c/FhFe5XvG2Dsdg1RYb0Z2tP3H8Re60dATtBi8lH7v3JculHEZ/pn/9hP40CetrBclJ4AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120323AA1270</div>
+    <div class="info-line">2026-06-10  18:15  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120324AA1270" data-datetime="2026-06-10 18:30">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAElEQVR4nOWWQW4DIQxFPwPSLOFG5AY5Uq5Gj9IDjATLSB796Du7tIsuGi9aLxhkjfT55hlIxGuc25cU8Fdy4NSYJ/LsnugWtJZOqtgGZFLL2GJ0kdIFlakBK5Xg2q+EOt6s8V2uDvvRf7+VK0LLP7sBlVjBPPdonitJGnA2aMYR5beLqEqrzBwW53d4834U4N76HtS/oDyK50z5Vc23AN3tyTQ/b7Yu9+Z8bwG6RTAf1wSUA/txPduMqrOH3wt5CjOLvY+ALtEas78ySFJOOayOHOe3A12dWwelHsezYt3yREE/W9j57H6dK1lm7P5Sp5ZPwnQ1Ps36GKOb/tk79gE+raZVILqQYQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120324AA1270</div>
+    <div class="info-line">2026-06-10  18:30  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20266101120401AA1270" data-datetime="2026-06-10 18:45">
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA60lEQVR4nOVWQQ7CMAxz1t2zH4Wv8bPuR90Rqcgo6w4IJG4zEkxT2+Xi2smcGPH63Ke3EPArMbDlWhrgg3p00V2CJBCloZB5jUmDC7MLsObXZrNI5/nYnWZxEsb0IbZZPx3jlS+B2WuenNjE9RylhbCe7Uu+AbbYM5tkmZQ1fEHWjuhe4Uy1SRUuM8VeM79edbhtvNGdcHaX4UYqzJpVzWTdZTrzSWpZX9jMbLdl4LYkOlQ6kywtiY+W1FU+afvPa4j7cgrG9CkWwDo8E0pcvyblJW52kfYj5Jrd36vKnzHmq8OlRb5hfzbHPgDERIElljeaogAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20266101120401AA1270</div>
+    <div class="info-line">2026-06-10  18:45  12:00</div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+</div>
+<div class="dots" id="dots"></div>
+<div class="unused-counter" id="unusedCounter"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  // ── Firebase 初期化 ──
+  firebase.initializeApp({
+    apiKey: "AIzaSyCu2F1TC0L43IB1K-YEcRR5PQURd4204cg",
+    authDomain: "testcase-eaa9c.firebaseapp.com",
+    databaseURL: "https://testcase-eaa9c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "testcase-eaa9c",
+    storageBucket: "testcase-eaa9c.firebasestorage.app",
+    messagingSenderId: "106706526418",
+    appId: "1:106706526418:web:664b9c0689383709ca8d0b"
+  });
+  var db = firebase.database();
+
+  // ── スライダー & ドット ──
+  var slider = document.getElementById('slider');
+  var dotsContainer = document.getElementById('dots');
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+
+  if (total <= 20) {
+    slides.forEach(function(_, i) {
+      var d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      dotsContainer.appendChild(d);
+    });
+  }
+  var dots = document.querySelectorAll('.dot');
+  slider.addEventListener('scroll', function() {
+    var idx = Math.round(slider.scrollLeft / window.innerWidth);
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+  }, { passive: true });
+
+  // ── 各スライドに Firebase リスナーを設定 ──
+  var loadedCount = 0;
+  var validSlides = Array.from(slides).filter(function(s) { return s.dataset.prn; });
+
+  validSlides.forEach(function(slide) {
+    var prn = slide.dataset.prn;
+    var ref = db.ref('qrcodes/' + prn + '/used');
+    ref.on('value', function(snap) {
+      if (snap.val() === true) {
+        applyUsed(slide);
+      }
+      loadedCount++;
+      if (loadedCount === validSlides.length) {
+        updateCounter();
+        scrollToFirstUnused();
+      }
+    });
+  });
+
+  var unusedCounter = document.getElementById('unusedCounter');
+  function updateCounter() {
+    var unused = validSlides.filter(function(s) { return !s.classList.contains('used'); }).length;
+    unusedCounter.textContent = '未使用 ' + unused + ' 件';
+  }
+
+  function applyUsed(slide) {
+    slide.classList.add('used');
+    var btn = slide.querySelector('.use-btn');
+    if (btn) btn.textContent = '使用済み';
+    updateCounter();
+  }
+
+  function scrollToFirstUnused() {
+    var now = new Date();
+    var bestIdx = -1;
+    var bestDiff = Infinity;
+    validSlides.forEach(function(s, i) {
+      var dt = s.dataset.datetime; // "YYYY-MM-DD HH:MM"
+      if (!dt) return;
+      var slideTime = new Date(dt);
+      if (isNaN(slideTime)) return;
+      var diff = Math.abs(slideTime - now);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+    });
+    if (bestIdx < 0) return;
+    slider.scrollTo({ left: bestIdx * window.innerWidth, behavior: 'instant' });
+  }
+
+  function scrollToNextUnused(currentSlide) {
+    var currentIdx = validSlides.indexOf(currentSlide);
+    for (var i = currentIdx + 1; i < validSlides.length; i++) {
+      if (!validSlides[i].classList.contains('used')) {
+        slider.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
+        return;
+      }
+    }
+  }
+
+  function markUsed(btn) {
+    var slide = btn.closest('.slide');
+    var prn = slide.dataset.prn;
+    db.ref('qrcodes/' + prn + '/used').set(true);
+    scrollToNextUnused(slide);
+  }
+</script>
+</body>
+</html>
