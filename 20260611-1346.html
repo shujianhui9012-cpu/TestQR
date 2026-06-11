@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>测试数据v2_20260611-1346</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, sans-serif; background: #111; overflow: hidden;
+          height: 100dvh; width: 100vw; }
+
+  /* ── スライダー ── */
+  .slider { display: flex; height: 100dvh; width: 100vw;
+             overflow-x: scroll; scroll-snap-type: x mandatory;
+             -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .slider::-webkit-scrollbar { display: none; }
+
+  /* ── 各スライド ── */
+  .slide { flex: 0 0 100vw; height: 100dvh; scroll-snap-align: start;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 16px; position: relative; background: #fff; }
+  .slide.used { background: #e8e8e8; }
+
+  /* ── QR画像 ── */
+  .qr-wrap { position: relative; width: min(80vw, 80vh); height: min(80vw, 80vh); }
+  .qr-wrap img { width: 100%; height: 100%; display: block;
+                  border-radius: 8px; border: 1px solid #eee; transition: filter .3s; }
+  .slide.used .qr-wrap img { filter: grayscale(100%); opacity: .4; }
+
+  /* 使用済みスタンプ */
+  .used-stamp { position: absolute; inset: 0; display: none; align-items: center;
+                 justify-content: center; font-size: clamp(28px, 10vw, 48px);
+                 font-weight: bold; color: #e74c3c;
+                 border: 4px solid #e74c3c; border-radius: 8px;
+                 background: rgba(255,255,255,.5); letter-spacing: 3px; }
+  .slide.used .used-stamp { display: flex; }
+
+  /* ── pre_registration_number ── */
+  .prn { font-size: clamp(10px, 2.5vw, 13px); color: #666;
+          word-break: break-all; text-align: center; margin-top: 10px;
+          max-width: min(80vw, 80vh); }
+
+  /* ── 日付・時刻情報 ── */
+  .info-line { font-size: clamp(13px, 3vw, 16px); color: #333; font-weight: bold;
+               text-align: center; margin-top: 6px; letter-spacing: 0.03em; }
+
+  /* ── 序号 ── */
+  .seq-num { position: absolute; top: 12px; left: 16px;
+              font-size: clamp(13px, 3vw, 16px); font-weight: bold;
+              color: #555; pointer-events: none; }
+
+  /* ── タグ行 ── */
+  .tags { display: flex; flex-wrap: wrap; justify-content: center;
+           gap: 6px; margin-top: 8px; max-width: min(80vw, 80vh); }
+  .tag { display: inline-block; padding: 3px 10px; border-radius: 12px;
+          font-size: clamp(11px, 2.5vw, 13px); font-weight: bold; letter-spacing: 0.02em; }
+  .tag-type   { background: #dbeafe; color: #1d4ed8; }
+  .tag-status { background: #dcfce7; color: #15803d; }
+  .tag-note   { background: #fef3c7; color: #92400e; }
+
+  /* ── 使用ボタン ── */
+  .use-btn { margin-top: 16px; padding: 14px 40px;
+              background: #2563eb; color: white; border: none;
+              border-radius: 32px; font-size: 18px; font-weight: bold;
+              cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,.4);
+              transition: background .15s, transform .1s; -webkit-tap-highlight-color: transparent; }
+  .use-btn:active { transform: scale(.96); }
+  .slide.used .use-btn { background: #aaa; box-shadow: none; pointer-events: none; }
+
+  /* ── ページドット ── */
+  .dots { position: fixed; bottom: 12px; left: 0; right: 0;
+           display: flex; justify-content: center; gap: 5px; pointer-events: none; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: #ccc; transition: background .2s; }
+  .dot.active { background: #2563eb; }
+
+  /* ── 未使用カウンター ── */
+  .unused-counter { position: fixed; top: 14px; right: 16px; z-index: 100;
+                     color: #e74c3c; font-size: 20px; font-weight: bold;
+                     pointer-events: none; text-shadow: 0 1px 3px rgba(0,0,0,.15); }
+
+  /* ── 一覧ボタン ── */
+  .ov-btn { position: fixed; top: 10px; left: 16px; z-index: 100;
+             background: rgba(0,0,0,.18); border: none; border-radius: 8px;
+             padding: 5px 9px; font-size: 20px; cursor: pointer; color: #333;
+             -webkit-tap-highlight-color: transparent; }
+
+  /* ── 一覧オーバーレイ ── */
+  #overview { position: fixed; inset: 0; z-index: 200; background: #111;
+               overflow-y: auto; display: none; }
+  #overview.open { display: block; }
+  .ov-header { display: flex; align-items: center; justify-content: space-between;
+                padding: 14px 16px; position: sticky; top: 0; background: #111;
+                z-index: 1; border-bottom: 1px solid #333; }
+  .ov-title { color: #fff; font-size: 16px; font-weight: bold; }
+  .ov-close { background: none; border: none; color: #fff; font-size: 24px;
+               cursor: pointer; padding: 4px 8px; line-height: 1; }
+  .ov-grid { display: grid; grid-template-columns: repeat(3, 1fr);
+              gap: 8px; padding: 12px; }
+  @media (min-width: 600px) { .ov-grid { grid-template-columns: repeat(4, 1fr); } }
+  .ov-card { position: relative; background: #fff; border-radius: 8px;
+              overflow: hidden; cursor: pointer;
+              display: flex; flex-direction: column; align-items: center;
+              padding: 6px 4px 8px; transition: opacity .2s; }
+  .ov-card.used { opacity: .4; }
+  .ov-card img { width: 90%; display: block; border-radius: 4px; }
+  .ov-seq  { font-size: 10px; color: #888; margin-top: 4px; }
+  .ov-time { font-size: 11px; color: #333; font-weight: bold; margin-top: 1px; }
+  .ov-tags { display: flex; flex-wrap: wrap; gap: 2px; margin-top: 3px; justify-content: center; }
+  .ov-tags .tag { font-size: 9px; padding: 1px 5px; }
+  .ov-stamp { position: absolute; inset: 0; display: none; align-items: center;
+               justify-content: center; font-size: 13px; font-weight: bold;
+               color: #e74c3c; background: rgba(255,255,255,.55);
+               border: 3px solid #e74c3c; border-radius: 8px; letter-spacing: 2px; }
+  .ov-card.used .ov-stamp { display: flex; }
+</style>
+</head>
+<body>
+<div class="slider" id="slider">
+  
+  <div class="slide" data-prn="20260611011202021307" data-datetime="2026-06-11 10:00">
+    <div class="seq-num">1/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWQW4EIQxzGKQ5Mj9ins48pT/IHCuxcmW23UN7rg9thALkYsUxCUF8t0f5EQL+SgxM+Y1jy74CfZpwO8ktIU8yPbiKRZwqa5y4o/q5b+P3MV5WP/dGvClrJy7XFi1rI26vnrO79fy07BLzsunR1a2yVuD9uCquOGw8i2Glqds6FA8u0MbGsRqIutY0vd/OxATiWK2jDRPPJBObVN2nj+ci11RcJnYO/zyaTalvvnw7qeG/JyJCJS6mdwSoaYjt5yoG3PJ1uOYde14SWHHidrWsOF0819c8mhU7EW08vPOIWnDpOf7ZP/YDZ0yd1KP1H30AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202021307</div>
+    <div class="info-line">2026-06-11  10:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">キャンセル</span><span class="tag tag-note">キャンセル済エラー</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202031308" data-datetime="2026-06-11 10:15">
+    <div class="seq-num">2/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/klEQVR4nOVWS2rFMAwcxYa3VG/Qo9g3K72ZcpR3A3uvMEVOumkfdNOnRStMQobAePTxWIivcWzfIOCvYOCIZ6FxtAU0T9pLI4nZFztjG1sOL0Q6lBXAlJqd+x1qz+Z4gM23M9U//febGGnQ9/hSeh7vLiKhFzhE5CVrjq6ws7FJpswROFoZrZBQcjTXLF5aofkS63nnBkhzJXSdV2olLc+MDF96da0tgXfD7LzLbaDOXqc8h+NB8IzoKHO10L5l+hGhBKK3PWuOSAbvp3bP9KMprqyzH9JT6luvt9rNcbwOUTvS/Yj3WMitL6O1LLG++/KjfvpvnTl65Z/dYz8AmIGyFAmgvXEAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202031308</div>
+    <div class="info-line">2026-06-11  10:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">キャンセル</span><span class="tag tag-note">キャンセル済エラー</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202041309" data-datetime="2026-06-11 10:30">
+    <div class="seq-num">3/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAElEQVR4nOVWQW7EIAwcA9IeyY/gZ/kaecr+AB8rgWblkL20PazU1oeuhUAaRTFjj22E+GwzfIGA/4KB3fbIRi7qZTjdpZhH3eeGSNo1go9fiFTkduuASvKO/fGx/bmPbzDdb/f6wne/hSWTFpBygwKZtocf/C+8jh0iAq0JmCKyedXR05awSbrUEdhL7CWyjUz2MrKb33Mnr+J16hswviQyYy9n4/Lha9jcMHAgt4FiVRyc+MLIYvH1y+8y897O5aqrlWLAtD284kwTcxtP7sNzHmlNmUnrlOqnK1jfuELtlN9wnbpDK++24JpfnnzttTNc55FAbf4m9eErb/aOfQC1061r8Zn8oAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202041309</div>
+    <div class="info-line">2026-06-11  10:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">キャンセル</span><span class="tag tag-note">キャンセル済エラー</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202051310" data-datetime="2026-06-11 10:45">
+    <div class="seq-num">4/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+klEQVR4nOVWO24FIAxzAKkj3AiODkfpASrBWCnIVaDq8Cp1exleM/DJYkxiK0I8xg6/UsCr5MBpa5xAvtSrOr2lkkTucSKS9ozggwuRhtU+C7AkOf1z+t4z00d7Ekb4Kzd2eTrGA18CaTVNp7WWG98hIkB9m9giUrx09BPTGpuki47AWaPpiJHUzDjd9ItdBt/bLsPcw9Gv9PiV2q0ie/0z+4Gumrud/eqLW189ZP1wb1xz5umu4IAbsETEbFkx0pItzauv6qHZOa3E6tZXswIm4ch+r+o7C+yCyJ5yhyffWdVKfAQVXOuL3K9Vqu98pThCduIr/2yO/QIyHLNSNHkcOgAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202051310</div>
+    <div class="info-line">2026-06-11  10:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">キャンセル</span><span class="tag tag-note">キャンセル済エラー</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611999902061311" data-datetime="2026-06-11 11:00">
+    <div class="seq-num">5/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABAElEQVR4nOVWsW0DMQw8SurpDTKKtFmQzfSjZAOxNKDHGXzZhpFvYxYJCxXXHI/kkRLiZ+zpBAF/BQOHv5kE6gHUGZRLJQlri93TSDG8EGnQrzwAkxJfe+3v5zhh1uZR6lfsNdIvY8VHCyhLrBIWpncTEdhnAXYRuUT56B59DTbJIB9ZK9a83NphbY/T29f2yA/VM6zOA5k9j+pvUJ1B0rm035urUf3Fdr0cdvJltb2J4xxcMerU7qMVpBfPezTVT1IeUXM13LbO+9A+I++RSVEWk11a6F1Q5oH9g97iFMhr4icJW/6O0fvsr/s3r0anGF74PA+sfeWGSgG88s/+sTcw/Ktz/JMsiQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611999902061311</div>
+    <div class="info-line">2026-06-11  11:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">異なる店番</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611999902071312" data-datetime="2026-06-11 11:15">
+    <div class="seq-num">6/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOVWMW7EMAyjYgMdlR8pX+vPfD+yxwIKWDDp1Hbo0Gq4GoESEAEYmTQVIz6vc/sCAc+CgVO1zeCMC4gs4g2Sjfyos4ZXmNmBZViqvXjvffQ/5/gee9t/9t7vYF0SA30dqa6JVdbvw8yAeJk4zWyv6tfv5JC+rMsNcEYj4TpE6WxF5wg6txOJSB/6hjrecT/IVwg46/JqIp3wkVf7WZmTU+Gcrl3PMn0pie+73LUV8G5YZmYdATz6stMOlM6jISf7yEJfAdE4LmNH5Ry8VtiOxlf4KJ1Hy1KjIcr1pTrVVaavqkx1zUEF5lbAa//sP/YddzWpAKkUI40AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611999902071312</div>
+    <div class="info-line">2026-06-11  11:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">異なる店番</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202081313" data-datetime="2026-06-11 11:30">
+    <div class="seq-num">7/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+UlEQVR4nOVWQW4DMQgc1r6zP7J/1q95n9IHRDLHSqymwhtFVXIOhxQhy+IyHhjAQjzbub2EgE+JgTPOwuF6UW+e9JZGEvYF64WMZ2wJuBWAoEFHJart5Zac++NnfzvGE98w6+XWk3EJVGXclLC0PB8iAguyp4jsWX10t+FL2CRT+gicrcxWSFdyNtc0XLiOO+mZNjfAiTJbjKxgPYL4loJLXkm+zqw8bzExpFcTD0kfb8J4NT4qq2N5nq7+7KPQtmf1EVeJH9w9ay+IdFh3ZbV+Ss/a+y3Se1HWcM/cgxZ65nc4Uus74texBpdn6nmuqaUjS8/yz/6xv1ZmuwPycCF5AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202081313</div>
+    <div class="info-line">2026-06-11  11:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202091314" data-datetime="2026-06-11 11:45">
+    <div class="seq-num">8/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+0lEQVR4nOVWu23FMAw8Sur5NnijSJtlNXqUDBBALANIuIC2iyCpw+KFMCiAzfH48VGIn7bLrxDwKjFwhq+0OvsZ6Cspl04S/vb5QCUjjZKDC5EBtaYGl5Zd+2P9PcY3a/fro36MZFwCTQkHLl8ScAtwiAh8NGCLyCNrj26za7BJJu2Rj3aSRczz2Il868RCr+TSYL2ScK0GdL/+V4FecnBJWrAmF/rSNFxbJ82otloWbsHVWR/7afc+l0w94lJGDjNrrmasbT2rnbq/OPXIR1M2H1tGqi5o3Dv7OUUt9c7xoMz3+JDa3zCoJfb3OPVImof+hi8JuPLP7tgv8ampMMTgEfYAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202091314</div>
+    <div class="info-line">2026-06-11  11:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202101315" data-datetime="2026-06-11 12:00">
+    <div class="seq-num">9/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA90lEQVR4nOVWMW4EIQy0F3rnR/CzKD/jnnI/gN6riWa5NEmKFMkUFwtRWEjDjLEHh32O8/iSMnuWnGFyL4DFpt5SdJcGwFbHvReA1zg0uObeLUaNYcurWvtb/j3GN7n1Wlf/wbnfzAHD4o18A6nDvbk7+Zqd7v6i6qNHjLweNgBJHxlmK7MVIAOYLUOGyz1jPJpXNDeMj8qMlLk4uFLFN2NQ5Etqoc5tT4wy9x1UuDtmM5Z4sIUPpR+NpB+xyqnSGQB98IN7Kv1o9QzU1U/vKt9vlBeDLhxcKfWjXi/rx13Hd9f3+uqQdUr9qOflv3ThQ4Dr/+wf+w6adrouQgJheQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202101315</div>
+    <div class="info-line">2026-06-11  12:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202111316" data-datetime="2026-06-11 12:15">
+    <div class="seq-num">10/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+ElEQVR4nOVWMW7EMAyjYgM3Kj+Sf9avOU+5H9jjAQpYyE2HXueqwJ2GONBCWaJIC/Ec5/YrBbxKDhzxLSSHrYR5Ui1GRrOr9oWe1wORBhyYDVNqUp/r9485ev2PmdfZ/hzjZ47smHLugNLzcA8RAawMnCKyZ+3RFd0XsUmm7BE4zLWXYYXdNRMXABxWSNeepRsIUilDPVYBQa0tB5fR3gHX/jVlz7ovlzLHiAM9774RC5EjDMKT/YghGlm42+VHU06RAEWuH2mvunxhtlRfmM1hj/3I0sntOpW3eyv3jyzfB0fMd/Gqh3BpLp9jhc01CvAMXHmzd+wnpM2um2RbqC8AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202111316</div>
+    <div class="info-line">2026-06-11  12:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202131317" data-datetime="2026-06-11 12:30">
+    <div class="seq-num">11/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8klEQVR4nOVWO05EMQwcJ5EoszfgKMnRw1G4gd07GuTsLkK8FlyAFaWYZjz+C/HddrlAwF/BQI2/clHHAYYn+TJIwua+oZLhRsnhhchEP3k2aemxf9Hf57hiJlfsq5UfxlqUFtA6YYhoW5reNxGBzQZsEbll9dHDlp/CJpnSR6COqqOS3kkd3rN4SfRFMqjz5gbIdfTGj76CvaTwKkKvhgPoEW3P0gtEiu/zOTO/YVFRq94ll9R95DGiQ7hn9RFPMX9q98x9ZOKdzeaWmTafw/qqiv2q0lfqnWMTNvkeD7n55XNwee4+gs2Iu+XolX92x34Ak4OzLFMHOJQAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202131317</div>
+    <div class="info-line">2026-06-11  12:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011202141318" data-datetime="2026-06-11 12:45">
+    <div class="seq-num">12/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOVWQU7EMAwcN5E4mh8lP6v4WfYp+4PkiORqkLv0Ahw4wBzAsqrKqjSZ2OOpER/j2D6VgL9SA2c+C0fhg3oL0VkaSaz9RGceY9PgwqzDx6t1LKvqu7/Bx29jfFFb+9O9f+O7n6yRA/4SAJyhw72ZGdZegcPMnlU6uuIx2CQlOgJnK7MVjnBytnAV7rkxOC/xivYGOBuQlM+XRA8VX2aycCRZ3T0z+zvfF7USN2MiPImnhDelHzE8pVSmbq7O5uamOplr+F5+tHp11tUP61DqiDnS8MyQ+lHH6rxnQtvfknyTdUj9qMdK/61Lw9f+2X/sGzDrvYqzMQafAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011202141318</div>
+    <div class="info-line">2026-06-11  12:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203011319" data-datetime="2026-06-11 13:00">
+    <div class="seq-num">13/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+UlEQVR4nOVWO27FMAyj4gAdlRs5N3vozZSjvBvIYwEFKuRkajt0aDm0GhSDCEDrQ8mS+Gjn8gkC/gqG9PItyybQg3SXPhmPc5vszsuByF7HsWPISs9989/n+Apbv/nfz2GZhrGfG6AZPN5DRIDeHKeIbCwd3WZXY2cmRUdI76HWHC0tlMibNmVbwYZW1MHKc/Mq7jW4qrUWCq93qAXKZ9YheH1l0JqQzRG0eC/zyjC0ah0c/Q4RkVUtHUHdg322VpFeoQdzH6lBrUb02Kl7YTyA/rYdrDm53F99fXnu7flg7X3c9a3CGkDUkZeffdVD6wLB4JV/9o59B7GfrjRgLJz8AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203011319</div>
+    <div class="info-line">2026-06-11  13:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203021320" data-datetime="2026-06-11 13:15">
+    <div class="seq-num">14/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWMXIEIQyzYXvnB3kK/Oy+xj0lPzA9O8qI3bsi6VUkzA4LbjSWLQuH/Vxn+RUy+ysxQ3KvGGZtB9oS4TYANW0FKoDU4DLm3i1wzG7TDxHPx+vwxPtSBLjl/s/OfLW4wLAYvAWWDvfp7jYfVK67f6h0dC/q6DotlY5qtgpYbBGFCpfFBdLqK+ul4rlmsxhIzqsq4xlsZrKNUZU8p+18WVzsabmU/ZykmuIV5muXHwVbmlQXoR+B/i/Ub7n9aPplSad3qR8F8z0/02NI3znTj9nxxc+k9R3gqOS+lP2cl4r36CgCXP9n79hvxzO4YOTzjMIAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203021320</div>
+    <div class="info-line">2026-06-11  13:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203031321" data-datetime="2026-06-11 13:30">
+    <div class="seq-num">15/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9ElEQVR4nOVWQW4DIQwcA1KO3h/hn0X9GX1KfgDHSl5NZdJWVXKOD62FkPBlmGFsI8RjnOUpBfyVHDhjrxyud+rdk+7SSWJdNzrjGiUHFyIGHZebYUlL1/7jeD3Gc27ZZT7mfkd5QY4c0Lc4KT0P911E7r46ReTIqqOvGL6NTTKljsDZ6+yVdCVnd03DRQ24EUwz+4aO80CU7bKmo3Jk9ckOjccNRGWezgysSobaQCZuxGYd50RfYU8EaKxgXXJwOxk6+zd3z5xHy5qyLTvF8vyMMPOP1J46j65Yxlss5L5vDb67a5XMeSS+DEBbOXzln/1jPwHuMrG6OMCPyQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203031321</div>
+    <div class="info-line">2026-06-11  13:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203041322" data-datetime="2026-06-11 13:45">
+    <div class="seq-num">16/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8ElEQVR4nOVWQYrDMAyU7NxV6IOcpztP6Q+cu8wUKaGU3UIvu3NodYiDMIwsz2iskJ8xy6+UyKfkBCO+FXBpmWhOqqUBENkW6xWIMgoHV1RX2VfcVtl1ofdeL/+P8SLXjot+u++PcktQKxe1sRhkp513U9Wg9G2dqtHtQsAVHDFakDnDSfpth37FcAq5UHDRk1TNs4b4KRTc0dwg1gMUvfJwJW+1H3OS3OcaHZaa6E7ls0SHc1Y72Y/sVJOzeAWgnvrtYhzcmJOajJqXMa/Dr2Rf2NIEt0r036fB1dh+ZJjpv2qD+r4aDwlzeKVf9o69A+tyqAzLrKjzAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203041322</div>
+    <div class="info-line">2026-06-11  13:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203051323" data-datetime="2026-06-11 14:00">
+    <div class="seq-num">17/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOVWMW4EMQgcbEsp2R+xT+d+xJaRWM0JR5FOlzoUCYWFacZjz4CFeI97/CgBf6UGRq0zMMN2wbLpLEYSyvvAJOsYowcXIicuSXVcsprvXv33MV5jvWRnMy6BdZ25ACWutnt+iAhgH4FbRI4uvvrVOXxt4l19Awyb20ckUzmjx78o85aFHepkI26UiWYga2dQtuEyLDfiZFHOJl25bDvlOj+P3axH0/tWRCVzayx75xHpk941j8CoeTTppWT17NOVAbYVVaOhNDYacMd3YlLz15c6OvmGJcrC2f6+qV5i1mY9F99q1E185Z/9Y5+6saLKf1DmIwAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203051323</div>
+    <div class="info-line">2026-06-11  14:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203061324" data-datetime="2026-06-11 14:15">
+    <div class="seq-num">18/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/UlEQVR4nOWWO27EMAxEh5KBLeUbSTcLcjP6KHuAAHQZgMYE9CfFBptuWSQqJJnN00gc0kI8jq38CAF/JQZazJVKHtK7J52l78S+zahkHKPkcCEygCW+VpmS7nn63t0+xosY5bdYT2A8xEjFOrYZaPQ87iIikdKGTUTmLB+dQ4/EJpniI9C6N63WK9VbIpe7UjuEx96zuB5roKvtqVVyuCSV1hGXrJ6m1676fD2xZ+az9SA2rUl5NWGdQ6+/3/xVjPLERySrwS/tntmPmqJpNIl1pPaFdQD9c16y6mQ518Z6H/X+ltX3cb4vtUaxQp6PLOaoVAgrZflI/tl/7BdPB60xCUjstAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203061324</div>
+    <div class="info-line">2026-06-11  14:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203081325" data-datetime="2026-06-11 14:30">
+    <div class="seq-num">19/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA7klEQVR4nOWWO27EMAxEyZV75kbSzXI17lFyA6mnMcHI2SZJkSKZYkMYBkwYeJ4RP3bY5zhvX1Jmz5IzTN4bGDvRS/QtncTlxxqkT50H7sMCFkm62vt7/T3jm9waxxo/eO83c0BaJPUGSse9u7ut18PsdPcXVR99RF6FDUDSR4bZ2+wNqABmr9BxeayRlDplc8OABLIht+qk8JuEO/eQ3FZv4Tou7Q00Gp467hXTKpLPQr2299Ee0VRdqnoGQO5Deyn30XILHGucPlR7v5uxg/CwuuT7CG+8THq+uUuLqktZz/MamJxapeD6P/uPfQdqEcAid25k9QAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203081325</div>
+    <div class="info-line">2026-06-11  14:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203091326" data-datetime="2026-06-11 14:45">
+    <div class="seq-num">20/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWQW4EIQxzytyZH8HP+jV4yv4gHCsxchWoVKm7hz1sfWhzYJA1UpRgxzHiZ1xvdxDwVzDQ40xeJsoCyhTlLSQTiRwnXZM3MLMK9HSrGHaIez8qcvvlHI+xOepT/70GO+KJ41Ms+5GJIau3m1lQ+lYvMztVOtoRagpik9TpyEO5c/FKpSPsuUESKImcWVUvG/akyjE0hPUW+p5aLVIr35dhSmm9si7vjij5yx2m1o/SarW4z2mxK0gl47OXUJAX5Cb2wYjcMN4n+nXqfGFFR24GJGr2q28/IjqAj9O1+xXSuqj2K/tne+wnpoKr5OxWV/sAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203091326</div>
+    <div class="info-line">2026-06-11  14:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203101327" data-datetime="2026-06-11 15:00">
+    <div class="seq-num">21/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABBklEQVR4nOVWQWrEMAwcxYY9Kj/oU+yf9WvOU/YBBfm4oDBFSfey7WEPWx1aEUIQAXkkzYyFeIx9+ZYC/koOtHgXjsITevOkszSSmH2XXsg4xpJQtwIQNCiro861fCT3frutv17jh9x8v1z7E/+9ss8Eqo74UmKm4d1EBDPA7iKyZvHoK8a52CRTeARaK9YK6Upac82pG7nbCgcuISBbnT1Nr1wJZaA2BPAlpS7pOmiHaml029P2ykKvaCgHds/cZ2uuo1hQ2FP9iLhP2bN4RPI0wUT+LuFH0jElLOlwQ2Tpc4SyGvY3Ex2p95wpPjuv8SB3vozVGonz3U4/CoUEsnRS/tk99hN0hrN2G4rHbAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203101327</div>
+    <div class="info-line">2026-06-11  15:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203111328" data-datetime="2026-06-11 15:15">
+    <div class="seq-num">22/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA70lEQVR4nOVWQY4DIQxLGqQ9stI8YJ/CPJ0+pT/I3IO8CnRXVXuuK7U5zAAX48ROUMh9jNPDkci7nAk8v4YOLOotSHdpE7GVYzcgr3Hi4IrqLofm7tBCynP5X40fLy+oecNlfzbGTZSU1vwl3wo5aHzPqlncr8s+VPWb5aMV/rcAKD4SeFv+lZr+NR6uAD0k0aMCzukbCSoVhm7e4GI8XFzRZ7Z5eUZfNM2b1Ex4cPVsmefs1cGdRzFFRdRzA5BkM1JjweqTOk00Nh+bx8Z+C5Qcgmcjzt8VqedJXJj1RQ+RbJWVq+erj2j9WT/sHfsLyDiuW45GOK0AAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203111328</div>
+    <div class="info-line">2026-06-11  15:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203121329" data-datetime="2026-06-11 15:30">
+    <div class="seq-num">23/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAABA0lEQVR4nOVWS07FMAwcJ5W6NDfgKMkNOBJXS4/CAZ7k7F0NcgobHgsWPC9glFatFWkSe/wR4ivOcmcC/ooNtHhXslpbhuZJZ2kkMeVij2OUHF6IdChdB6Zs2b4/TumP5vjGNvtuP9n3mzZyQEf8KT2P9xARzNfIXBF5ysqjT/gSdnyUFF5r1VoNV5PWXPN4HUG3MLLqxnY9+03q7eUAqufU5yVmxJW5SmWWn8tVoncOzO44HsVxB14wuI5qK4VLaj+CxgpXlxzeFpGNKH/c3TP70eyu3GaP7lCS8iig3Bzns4mO1Dlnis/Ot1jIjW8NaY3E+ozQsyHmq0ilHD3LP5tj3wF9Ta9ma0TZCgAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203121329</div>
+    <div class="info-line">2026-06-11  15:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203131330" data-datetime="2026-06-11 15:45">
+    <div class="seq-num">24/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6UlEQVR4nOVWMW4DMQyjzwdkdIE8oE9Rnu57Sn+g22WwkB1kSDp0aDm0GnyCYICmQIlXiOcY20sJ+Cs10POs7OSibiF6i01EG2+oZD5j0+CilBvOsp/zlPc+Wv91jC9qVj9u37n3Q7U9pZWfY7z73ohTq2e36ibUM7jCU9UrQsTX5vwyGu/JJsHlJOsIIGB0VZ8daKwJnehVhss+yVoAaF3XZ8/l/EhCrue6Wi3ki+lH0Sa6cI7IqauMjqbBzT1ZkCNcmo+rx1XsC0ekCR5V6L8rLrm4TO1HjSPT7DakfoT7vhLpufyz/9hPZWeusYX6OPkAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203131330</div>
+    <div class="info-line">2026-06-11  15:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203141331" data-datetime="2026-06-11 16:00">
+    <div class="seq-num">25/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOVWQU4EMQxzpr2XH/CU9md8rfMUftAekTIySpblABw4gA8QjUajaCTXSRzXiI9xHZ9SwF/JgSvehSyrZ6K76CydJLa9PM5CxjEODS7MBlr2eVtV1/6se/w2xhe5Pcr6zn8/lasxWkBtjK9GbBnf08yQRb7M7EGlo7eYnoNNUqIjcPWyeiG9kat7U+FyepvkXbyivYFYGgi+zH0VxA8RLle/8Q2ysjqv4Ig2y4IDwv5mxEQFNIR8kW2NpdHClVylI5KF8527K/1ohyXVPS4bKt/vqaPJe6ld6kdP2IPP8UDaX97UJOzvmX5knpYU7n8IcO2f3WNfAQxvulF/qbKaAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203141331</div>
+    <div class="info-line">2026-06-11  16:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203151332" data-datetime="2026-06-11 16:15">
+    <div class="seq-num">26/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOVWO27FMAyjrAAd7RspN+vVnKO8AxSQxwf4gYXyWdo3dOjT0GpwACIAo4gULcTXepRvEPBXMNDjVJJuO2Az6VuMJLBd7Dn9LgAEBphUX0bTj+R/v6m/nOMZZhjrT977RYzsGHJvQOXM491EBLA3x0NEWpaPrjqETTLFR6DbrF3dlH3WTF4oGdT7mbU3QMeEKXm0HNIqKbzkKePaUftM7BeVys5rxDNTz45dVPuUSwJvwRARWWoP/7YXcTwpethW9xBM9G+JPJL1EFWE01hTc2HIhN3blrUny/msXW+r3t6zch/nfGOwHQhVz8z7lVtsjDByDq/8s3vsJ58JrtR5vBSyAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203151332</div>
+    <div class="info-line">2026-06-11  16:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203161333" data-datetime="2026-06-11 16:30">
+    <div class="seq-num">27/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+ElEQVR4nOVWQW7EMAgc4tzZHzk/q/Zn7FP6A+dONBX29tL20EM7hxZFSEaRxgMD2IiPdm2fQsBfiYGjfCvfZ6Cn6C6dJDzg0ci6xqbBhdmB86VOp+3i3Pudr8cvY3wds9v3/vuZ2F7SAvaVZydOGd+HmS1JX2bFehPggk8LjhI2SUkfgaO32UeNTGcbmv6dfCfT9JDijhpTBYdeunJVnhkJLLLpoasvC/c5nF2oq2WzxEBpLDX9e5rZHMt4NN4vO1R7sJOcm6g/q7yJcFHpjcZYx5TuhX7d0Bi7B5R8B6qb6tPNjVXffB+VKX1f9fKzlVKBa//sHfsGPViyBLgBkroAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203161333</div>
+    <div class="info-line">2026-06-11  16:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203171334" data-datetime="2026-06-11 16:45">
+    <div class="seq-num">28/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/0lEQVR4nOVWQWoEMQyTJwN79P4o+UGftOzPsk/pAwrxsZBBRdkplPZcH1oTnMEXR5YtjxHf7dh+hIC/EgOHfCEn6grUmfSWShLR4L2QesaWkxdmDX6/DCBsz659Pa6/nuOL7ecdL4yWnJfA7vf9DXAi0ur8MDPETZNrZtesOTqtz9XYJFPmCBy1jFpIODnq9Ky8lFLO9THzdAOqsHeJxoBOUp03xO0ypJbTRfF7Yl/B+VTIIux5/MoG4H35tH6WL+wSDWcZWX01NLaao0/sM3MfRYNzj3ZYy9r7FZBuPKUji9/tvMMQja86yOW3CG9P5Pex9pHwai9GDl77Z/+xH7rtsr7kYGbaAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203171334</div>
+    <div class="info-line">2026-06-11  16:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203181335" data-datetime="2026-06-11 17:00">
+    <div class="seq-num">29/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA8UlEQVR4nOVWMW7EMAyj4uzOj3w/K/oz5UfKroCF7KJD26FDy+EqGAYiBKBFkZaN+Bz39iUFPEsOjNpb7WMmRorOMkiiOwONrGNsGlyYPXC97N1x2S7mvr/ievwxxve5+/jZf7+T20tawL6K7cQlq/c0M2C0wG1mh8pHHxElbJISH4ExWvloIna2kPn3zLnsON8lvYl4BtDodV/1KjxVuC2K7Um1C/sLdG+BRDVah7siFuEFndJ5NEhfXU6Vj0jOSTSye8p0FWPS66xi6zPlc6HRaxpuwnpjJDCXuL+e3UvMuv5i6Tnr1iorpQLX/tk79g3XobZF4uJPKQAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203181335</div>
+    <div class="info-line">2026-06-11  17:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203191336" data-datetime="2026-06-11 17:15">
+    <div class="seq-num">30/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA+ElEQVR4nOVWQWoEMQyTJ4EePT/y/KAvLmSf0h8kxwUPKk62W2gLvbQ+bE0YghmQZSQ7QnyOc/uSAh4lB/b4lm6ui7p5Ui1GTsRxFDLK2HJwIXIAF2jDkJrce2X9c4zvcuOI8/N/v5WrIS2gaquOqsRI43sRkcX3FJE9y0e3aCHmGZ7kX/N108ZuWf4FO1zDtj6nRx5ftjJP4JIlr89YfBfZPFy2mI3a7hrzTD13K7EgzBN1hamo0DMJzeH7sY/Y7TZAttR9VKeFPXE+r/Cxl9fnxpx3zjuutnPHteKs9pLVZzJMBFghn5LeG7jrufRZQJKe5Z+9Y98AF8mljBalg9gAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203191336</div>
+    <div class="info-line">2026-06-11  17:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203201337" data-datetime="2026-06-11 17:30">
+    <div class="seq-num">31/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOVWQWoEMQyTJwM9Zn7kfK0PK2R/lNwdVDyzU0p7rg5bY4LxRbFlOTHip63tVwp4lRw48ix5+pnwEN3FSaIStRcyr7FpcGHWMFuWPG0X976+r+OvMb7b/hXF3sS4BPbZIqsmpqzPDzMD/G1gmdmh0tHTOkcONkmJjsDhhU8RRWUZGv2C7Kjk8Kg94Drc4ZGb6vaq7HOPmk1OlmX8sl/kpoTPnRnKeR6JWE4PjX6nmZ1rGY9ltqyp3kG/Ks1gIIneRLhAjlYSfY33JsDd7sDXgcK+1y59j+YBtDCE+YeWX9yrMrT/qwBOFWv4tX/2j/0E2auxitGv8XYAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203201337</div>
+    <div class="info-line">2026-06-11  17:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203211338" data-datetime="2026-06-11 17:45">
+    <div class="seq-num">32/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOVWO27FMAyjrAd0dG6k3KxXc47ybqCMBRSwkJ2p7dCh1dBqUADCAP0RyQjxsa72CQL+CgZ6diUBm4BF0V6MSXpEH0rmNloNL0R2wB7njlMe1Xd/qP86x1eYxffW/SBGDpwiG9AZdbyHiACmjksmeyvgBe8aMQebZImOQLdUkJtyRK/kxRoqJaOPKt8A3ch0DPXpV73qvBzq2adf5StH1T0rqYvdEXXnneW2xJuv3ErzSGcoVPG2O4/O/RK5tumWrWiegSXelYNl+TvrzCh8244qn2z3t/PluevztSr3MX0jdZSphEIdeXZ1S8foOdVRwSv/7D/2HbCvtGXahToUAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203211338</div>
+    <div class="info-line">2026-06-11  17:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203221339" data-datetime="2026-06-11 18:00">
+    <div class="seq-num">33/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9UlEQVR4nOVWQW4DIQwcL0g50h/0KfCzfI08JT8wx0qsJjIJl1bqrXNILYSQL/bYMzZGfLfz+OEC3sUHetyJRHlCr1OUSyWJ0dK9JTLSODRxYdZQepxhWVTnvB+3L6t/FOP4xTeul9VoCPESyFFkBLWGDO/NzDBaBk4z+1DpaNuT2CQlOgK9Jq+JfRbS6yyquOwhW/aFtavmBlaFgdLTHlxTNSfp0dnELq2zYy6YKRKAsL/LvL5GpRAv9j4KYruKV7u5E5hLwlO5j0ZD4cVxWpPuoxI6Oj/dSpf+c8Y1j8Z7HGj7y6BW3FPJZ0daUlLx2f7ZP/YBzdK3sJIyf2QAAAAASUVORK5CYII=" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203221339</div>
+    <div class="info-line">2026-06-11  18:00  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203231340" data-datetime="2026-06-11 18:15">
+    <div class="seq-num">34/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA/ElEQVR4nOVWQWrEMAwc2QYfkx/0IwXn6fGDCvIxoKAim7awhd52DlthHKHLeJTxyOJ4jDv9KgGvUoNr7NndtkW9Gekszd0xjqqBHsdIHFyIHEC/dmBIIfW5fGf143gSRvqjtrk9HeORr8env79p2RyDq2dtWRtRz/AVS8wzjPN/R8ipAPfeC7rstD63rDDEWpSNpedrb9XPqrAhZRwkvn5ikrWZh2EmEq5FhwM9a3imkfWsAcrD1dizn7bFSOL1WYPmUvLsNss3wqZadg+LXisRcNNX0jGkas/E+TsjzPmS4xbO/f2ZR1ZQHbKdN3UeIe7RnA7GwJV/9o79BN9Aqrnmy2m9AAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203231340</div>
+    <div class="info-line">2026-06-11  18:15  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011203241341" data-datetime="2026-06-11 18:30">
+    <div class="seq-num">35/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA9klEQVR4nOVWMW4EIQy0MVJK8oM8BX52X/M9JT8wPWgic3spLnWmSCzEwjQjY49nFfIau/yARP4KJojcDY7oB+iLxNsBWHQDDEBweBNTHdJ865CplfTO9ftk63kpBN5yfafKHL/M8YoBLs3z1rB4vHdVlXlL5arqO0tHV7hINjYAUj/PUefIjmouc2xavpESXo9kgzg34KvBQuwaXJx3zvpajixPRumr8Xizss3tzGcmb0b0ddhTwoXCG7lbZn3cIbh+lMWVR1cvph9NrQ1vIelKhehHDTVkf4Q233Q/wmcu4dbXjqCI9b0fP7r8t05OvvrP/mO/AHGcrtrHDLZYAAAAAElFTkSuQmCC" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011203241341</div>
+    <div class="info-line">2026-06-11  18:30  12:00</div>
+    <div class="tags"><span class="tag tag-type">予約</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+  <div class="slide" data-prn="20260611011204011342" data-datetime="2026-06-11 18:45">
+    <div class="seq-num">36/36</div>
+    <div class="qr-wrap">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWAQAAAAAUekxPAAAA6ElEQVR4nOVWQQrDMAyTk8CO6Q/2FPfp6Y+c4yDBw+noYbtrsJligi+qZMWOON5jpo8S8Cs1uEXO3tx0FXSQcNXdsyGyuxsHN2oie+QN6FJIOpfr5F/peW2l70TccjIt0Hm3Uh2d62fTTPbzGYYw84rB6W+PthbgsR0FR7g6sXSuPmo71WbxxZK2AeoW/5B5c+OQLRDnhnlvqI2m81j3F9BgTdXZfd0jop9x7aNwFzTzcPW1iSKH2oOFi6C5+J5fIuCm6zS63OzI9oU3yEP2KTu4/R3hLg+1EwcXa0KuIbm2w2Dgyp+9Y5/986/uDjz3TAAAAABJRU5ErkJggg==" alt="QR" />
+      <div class="used-stamp">使用済み</div>
+    </div>
+    <div class="prn">20260611011204011342</div>
+    <div class="info-line">2026-06-11  18:45  12:00</div>
+    <div class="tags"><span class="tag tag-type">事前受付</span><span class="tag tag-status">未来店</span><span class="tag tag-note">正常系</span></div>
+    <button class="use-btn" onclick="markUsed(this)">使用する</button>
+  </div>
+</div>
+<div class="dots" id="dots"></div>
+<div class="unused-counter" id="unusedCounter"></div>
+<button class="ov-btn" onclick="toggleOverview()" title="一覧">⊞</button>
+<div id="overview">
+  <div class="ov-header">
+    <span class="ov-title">一覧 &nbsp;<span id="ov-count"></span></span>
+    <button class="ov-close" onclick="closeOverview()">✕</button>
+  </div>
+  <div class="ov-grid" id="ov-grid"></div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
+  // ── Firebase 初期化 ──
+  firebase.initializeApp({
+    apiKey: "AIzaSyCu2F1TC0L43IB1K-YEcRR5PQURd4204cg",
+    authDomain: "testcase-eaa9c.firebaseapp.com",
+    databaseURL: "https://testcase-eaa9c-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "testcase-eaa9c",
+    storageBucket: "testcase-eaa9c.firebasestorage.app",
+    messagingSenderId: "106706526418",
+    appId: "1:106706526418:web:664b9c0689383709ca8d0b"
+  });
+  var db = firebase.database();
+
+  // ── スライダー & ドット ──
+  var slider = document.getElementById('slider');
+  var dotsContainer = document.getElementById('dots');
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+
+  if (total <= 20) {
+    slides.forEach(function(_, i) {
+      var d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      dotsContainer.appendChild(d);
+    });
+  }
+  var dots = document.querySelectorAll('.dot');
+  slider.addEventListener('scroll', function() {
+    var idx = Math.round(slider.scrollLeft / window.innerWidth);
+    dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+  }, { passive: true });
+
+  // ── 各スライドに Firebase リスナーを設定 ──
+  var loadedCount = 0;
+  var validSlides = Array.from(slides).filter(function(s) { return s.dataset.prn; });
+
+  validSlides.forEach(function(slide) {
+    var prn = slide.dataset.prn;
+    var ref = db.ref('qrcodes/' + prn + '/used');
+    ref.on('value', function(snap) {
+      if (snap.val() === true) {
+        applyUsed(slide);
+      }
+      loadedCount++;
+      if (loadedCount === validSlides.length) {
+        updateCounter();
+        scrollToFirstUnused();
+      }
+    });
+  });
+
+  var unusedCounter = document.getElementById('unusedCounter');
+  function updateCounter() {
+    var unused = validSlides.filter(function(s) { return !s.classList.contains('used'); }).length;
+    unusedCounter.textContent = '未使用 ' + unused + ' 件';
+  }
+
+  function applyUsed(slide) {
+    slide.classList.add('used');
+    var btn = slide.querySelector('.use-btn');
+    if (btn) btn.textContent = '使用済み';
+    updateCounter();
+  }
+
+  function scrollToFirstUnused() {
+    var now = new Date();
+    var bestIdx = -1;
+    var bestDiff = Infinity;
+    validSlides.forEach(function(s, i) {
+      var dt = s.dataset.datetime; // "YYYY-MM-DD HH:MM"
+      if (!dt) return;
+      var slideTime = new Date(dt);
+      if (isNaN(slideTime)) return;
+      var diff = Math.abs(slideTime - now);
+      if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+    });
+    if (bestIdx < 0) return;
+    slider.scrollTo({ left: bestIdx * window.innerWidth, behavior: 'instant' });
+  }
+
+  function scrollToNextUnused(currentSlide) {
+    var currentIdx = validSlides.indexOf(currentSlide);
+    for (var i = currentIdx + 1; i < validSlides.length; i++) {
+      if (!validSlides[i].classList.contains('used')) {
+        slider.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
+        return;
+      }
+    }
+  }
+
+  function markUsed(btn) {
+    var slide = btn.closest('.slide');
+    var prn = slide.dataset.prn;
+    db.ref('qrcodes/' + prn + '/used').set(true);
+    scrollToNextUnused(slide);
+  }
+
+  // ── 一覧オーバーレイ ──
+  var overview = document.getElementById('overview');
+
+  function toggleOverview() {
+    overview.classList.contains('open') ? closeOverview() : openOverview();
+  }
+
+  function openOverview() {
+    buildOverview();
+    overview.classList.add('open');
+  }
+
+  function closeOverview() {
+    overview.classList.remove('open');
+  }
+
+  function buildOverview() {
+    var grid = document.getElementById('ov-grid');
+    grid.innerHTML = '';
+    var unused = 0;
+    validSlides.forEach(function(slide, i) {
+      var isUsed = slide.classList.contains('used');
+      if (!isUsed) unused++;
+
+      var card = document.createElement('div');
+      card.className = 'ov-card' + (isUsed ? ' used' : '');
+
+      var img = document.createElement('img');
+      img.src = slide.querySelector('img').src;
+
+      var seq = document.createElement('div');
+      seq.className = 'ov-seq';
+      seq.textContent = (i + 1) + '/' + total;
+
+      var dt = slide.dataset.datetime || '';
+      var time = dt.split(' ')[1] || '';
+      var timeEl = document.createElement('div');
+      timeEl.className = 'ov-time';
+      timeEl.textContent = time;
+
+      var tagsEl = slide.querySelector('.tags');
+      var tagsClone = document.createElement('div');
+      tagsClone.className = 'ov-tags';
+      if (tagsEl) {
+        tagsEl.querySelectorAll('.tag').forEach(function(t) {
+          tagsClone.appendChild(t.cloneNode(true));
+        });
+      }
+
+      var stamp = document.createElement('div');
+      stamp.className = 'ov-stamp';
+      stamp.textContent = '使用済み';
+
+      card.appendChild(img);
+      card.appendChild(seq);
+      card.appendChild(timeEl);
+      if (tagsClone.children.length) card.appendChild(tagsClone);
+      card.appendChild(stamp);
+
+      card.addEventListener('click', function() {
+        slider.scrollTo({ left: i * window.innerWidth, behavior: 'instant' });
+        closeOverview();
+      });
+
+      grid.appendChild(card);
+    });
+
+    document.getElementById('ov-count').textContent =
+      '未使用 ' + unused + ' / ' + validSlides.length + ' 件';
+  }
+</script>
+</body>
+</html>
